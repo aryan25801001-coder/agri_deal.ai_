@@ -1,0 +1,33 @@
+Retrieving projectΓÇª
+Deploying aryan25801001-coders-projects/agri-deal-ai
+Uploading [--------------------] (0.0B/94KB)
+Uploading [======--------------] (32.0KB/94KB)
+Uploading [===========---------] (53.8KB/94KB)
+Uploading [==================--] (85.8KB/94KB)
+Uploading [====================] (94.0KB/94KB)
+Inspect: https://vercel.com/aryan25801001-coders-projects/agri-deal-ai/5ihGGxKgGYzrhaG5cD8YEF1BRHCL [4s]
+Production: https://agri-deal-ku1d7jcgh-aryan25801001-coders-projects.vercel.app [4s]
+Building...
+Building...
+Building: Running build in Washington, D.C., USA (East) ΓÇô iad1
+Building: Build machine configuration: 2 cores, 8 GB
+Building: Retrieving list of deployment files...
+Building: Previous build caches not available.
+Building: Downloading 138 deployment files...
+Building: Running "vercel build"
+Building: Vercel CLI 50.28.0
+Building: WARN! Due to `builds` existing in your configuration file, the Build and Development Settings defined in your Project Settings will not apply. Learn More: https://vercel.link/unused-build-settings
+Building: No Python version specified in .python-version, pyproject.toml, or Pipfile.lock. Using python version: 3.12
+Building: Creating virtual environment at "/vercel/path1/.vercel/python/.venv"...
+Building: Using uv at "/usr/local/bin/uv"
+Building: Installing required dependencies from requirements.txt...
+Building: Build Completed in /vercel/output [7s]
+Building: Deploying outputs...
+Building: Deployment completed
+Building: Creating build cache...
+Building: Skipping cache upload because no files were prepared
+[2K[1A[2K[GProduction: https://agri-deal-ku1d7jcgh-aryan25801001-coders-projects.vercel.app [26s]
+Completing...
+Aliased: https://agri-deal-ai.vercel.app [26s]
+Due to `builds` existing in your configuration file, the Build and Development Settings defined in your Project Settings will not apply. Learn More: https://vercel.link/unused-build-settings
+https://agri-deal-ku1d7jcgh-aryan25801001-coders-projects.vercel.app
