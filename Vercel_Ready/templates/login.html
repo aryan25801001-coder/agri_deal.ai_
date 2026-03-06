@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+{% block title %}Login - AI AgriMarket{% endblock %}
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364) !important;
+        min-height: 100vh;
+    }
+
+    .auth-wrap {
+        min-height: calc(100vh - 76px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 16px;
+    }
+
+    .auth-card {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 28px;
+        overflow: hidden;
+        width: 100%;
+        max-width: 900px;
+        display: flex;
+        backdrop-filter: blur(16px);
+        box-shadow: 0 32px 100px rgba(0, 0, 0, 0.4);
+    }
+
+    .auth-left {
+        background: linear-gradient(160deg, #14532d 0%, #16a34a 60%, #059669 100%);
+        padding: 60px 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .auth-left::before {
+        content: '';
+        position: absolute;
+        top: -80px;
+        right: -80px;
+        width: 280px;
+        height: 280px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 50%;
+    }
+
+    .auth-left::after {
+        content: '';
+        position: absolute;
+        bottom: -60px;
+        left: -60px;
+        width: 200px;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 50%;
+    }
+
+    .auth-left h2 {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: white;
+        letter-spacing: -1px;
+        margin-bottom: 14px;
+        position: relative;
+    }
+
+    .auth-left p {
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 0.95rem;
+        line-height: 1.7;
+        position: relative;
+    }
+
+    .auth-feat {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+        position: relative;
+    }
+
+    .auth-feat-icon {
+        width: 42px;
+        height: 42px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+
+    .auth-feat-text {
+        font-size: 0.88rem;
+        color: rgba(255, 255, 255, 0.85);
+        font-weight: 500;
+    }
+
+    .auth-right {
+        padding: 56px 44px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .auth-right h3 {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: white;
+        letter-spacing: -0.5px;
+        margin-bottom: 6px;
+    }
+
+    .auth-right .subtitle {
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 0.9rem;
+        margin-bottom: 32px;
+    }
+
+    .auth-input-group {
+        margin-bottom: 20px;
+    }
+
+    .auth-input-group label {
+        display: block;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.83rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .auth-input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.07);
+        border: 1.5px solid rgba(255, 255, 255, 0.12);
+        border-radius: 12px;
+        padding: 13px 16px;
+        color: white;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+        outline: none;
+    }
+
+    .auth-input:focus {
+        border-color: #16a34a;
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
+    }
+
+    .auth-input::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+    }
+
+    .auth-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #16a34a, #15803d);
+        border: none;
+        border-radius: 12px;
+        padding: 14px;
+        color: white;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 4px 20px rgba(22, 163, 74, 0.35);
+    }
+
+    .auth-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 32px rgba(22, 163, 74, 0.45);
+    }
+
+    .auth-link {
+        color: #86efac;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .auth-link:hover {
+        color: #bbf7d0;
+    }
+
+    .auth-divider {
+        border-color: rgba(255, 255, 255, 0.1);
+        margin: 24px 0;
+    }
+
+    .auth-footer-text {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.85rem;
+    }
+
+    .input-icon-wrap {
+        position: relative;
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 0.9rem;
+        pointer-events: none;
+    }
+
+    .input-icon-wrap .auth-input {
+        padding-left: 38px;
+    }
+
+    @media (max-width:768px) {
+        .auth-left {
+            display: none;
+        }
+
+        .auth-right {
+            padding: 40px 28px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+    <div class="auth-card">
+        <!-- Left Panel -->
+        <div class="auth-left">
+            <div style="margin-bottom:32px;">
+                <div style="font-size:2.5rem; margin-bottom:12px;">🌾</div>
+                <h2>Welcome Back to<br>AI AgriMarket</h2>
+                <p>India's smartest agricultural marketplace — connecting farmers with buyers.</p>
+            </div>
+            <div class="auth-feat">
+                <div class="auth-feat-icon">🤖</div>
+                <div class="auth-feat-text">AI-powered price predictions</div>
+            </div>
+            <div class="auth-feat">
+                <div class="auth-feat-icon">🌱</div>
+                <div class="auth-feat-text">Soil quality analysis</div>
+            </div>
+            <div class="auth-feat">
+                <div class="auth-feat-icon">🔬</div>
+                <div class="auth-feat-text">Crop disease detection</div>
+            </div>
+            <div class="auth-feat">
+                <div class="auth-feat-icon">📈</div>
+                <div class="auth-feat-text">Real-time mandi prices</div>
+            </div>
+        </div>
+        <!-- Right Panel -->
+        <div class="auth-right">
+            <div style="font-size:2rem; margin-bottom:8px;">👋</div>
+            <h3>Sign In</h3>
+            <div class="subtitle">Enter your credentials to access your account</div>
+            <form method="POST">
+                <div class="auth-input-group">
+                    <label>Username</label>
+                    <div class="input-icon-wrap">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" name="username" class="auth-input" placeholder="Enter your username" required
+                            autocomplete="username">
+                    </div>
+                </div>
+                <div class="auth-input-group">
+                    <label>Password</label>
+                    <div class="input-icon-wrap">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" name="password" class="auth-input" placeholder="Enter your password"
+                            required autocomplete="current-password">
+                    </div>
+                </div>
+                <button type="submit" class="auth-btn">
+                    <i class="fas fa-sign-in-alt me-2"></i>Sign In to AgriMarket
+                </button>
+            </form>
+            <hr class="auth-divider">
+            <div class="auth-footer-text">
+                New to AgriMarket? <a href="{{ url_for('register') }}" class="auth-link">Create account →</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

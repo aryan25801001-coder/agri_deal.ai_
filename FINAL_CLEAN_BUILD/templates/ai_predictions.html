@@ -296,23 +296,6 @@
                 </div>
             </div>
             {% endfor %}
-
-            {% if not is_premium %}
-            <div class="col-md-4">
-                <div class="pred-card" style="border: 2px dashed #818cf8; background: #eef2ff; cursor: pointer;"
-                    onclick="location.href='{{ url_for('upgrade_premium') }}'">
-                    <div class="pred-icon" style="background: #c7d2fe; color: #4338ca;">
-                        <i class="fas fa-crown"></i>
-                    </div>
-                    <div class="pred-cat" style="color:#4338ca;">Premium Feature</div>
-                    <div class="pred-name" style="color:#1e1b4b;">Unlock 15+ More categories</div>
-                    <div style="font-size: 0.88rem; color: #4338ca; margin-bottom: 20px;">
-                        Get precise AI forecasts for all specialty crops and livestock.
-                    </div>
-                    <div class="advisor-btn text-center" style="padding: 10px;">UPGRADE TO PREMIUM</div>
-                </div>
-            </div>
-            {% endif %}
         </div>
     </div>
 </div>

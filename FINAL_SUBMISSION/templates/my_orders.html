@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}My Orders - AI AgriMarket{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4"><i class="fas fa-shopping-bag me-2"></i>My Orders</h2>
+    
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Orders I've Made</h5>
+                </div>
+                <div class="card-body">
+                    {% if bought_orders %}
+                        {% for order in bought_orders %}
+                        <div class="border-bottom pb-3 mb-3">
+                            <div class="d-flex justify-content-between">
+                                <strong>{{ order.product_name }}</strong>
+                                <span class="badge bg-{{ 'warning' if order.status == 'pending' else 'success' }}">
+                                    {{ order.status|title }}
+                                </span>
+                            </div>
+                            <p class="mb-1">Qty: {{ order.quantity }} | ₹{{ order.total_price }}</p>
+                            <small class="text-muted">Seller: {{ order.seller_name }} | {{ order.created_at }}</small>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No orders placed yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-box me-2"></i>Orders I've Received</h5>
+                </div>
+                <div class="card-body">
+                    {% if sold_orders %}
+                        {% for order in sold_orders %}
+                        <div class="border-bottom pb-3 mb-3">
+                            <div class="d-flex justify-content-between">
+                                <strong>{{ order.product_name }}</strong>
+                                <span class="badge bg-{{ 'warning' if order.status == 'pending' else 'success' }}">
+                                    {{ order.status|title }}
+                                </span>
+                            </div>
+                            <p class="mb-1">Qty: {{ order.quantity }} | ₹{{ order.total_price }}</p>
+                            <small class="text-muted">Buyer: {{ order.buyer_name }} | {{ order.created_at }}</small>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No orders received yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

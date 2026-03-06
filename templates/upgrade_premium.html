@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% block title %}Go Premium - AI AgriMarket{% endblock %}
+
+{% block extra_css %}
+<style>
+    .premium-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: white;
+        padding: 80px 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .premium-hero::before {
+        content: '';
+        position: absolute;
+        top: -100px;
+        right: -100px;
+        width: 400px;
+        height: 400px;
+        background: rgba(22, 163, 74, 0.15);
+        border-radius: 50%;
+        filter: blur(60px);
+    }
+
+    .premium-card {
+        background: white;
+        border-radius: 30px;
+        padding: 50px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        margin-top: -60px;
+        position: relative;
+        z-index: 10;
+        border: 1px solid #e2e8f0;
+    }
+
+    .feature-list {
+        list-style: none;
+        padding: 0;
+        margin: 30px 0;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+        font-size: 1.1rem;
+        color: #334155;
+    }
+
+    .feature-item i {
+        color: #16a34a;
+        font-size: 1.4rem;
+        width: 30px;
+    }
+
+    .price-tag {
+        font-size: 3.5rem;
+        font-weight: 900;
+        color: #1e293b;
+        margin: 20px 0;
+    }
+
+    .price-tag span {
+        font-size: 1.2rem;
+        color: #64748b;
+        font-weight: 600;
+    }
+
+    .upgrade-btn {
+        background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+        color: white;
+        border: none;
+        padding: 18px 40px;
+        border-radius: 15px;
+        font-size: 1.25rem;
+        font-weight: 800;
+        width: 100%;
+        transition: all 0.3s;
+        box-shadow: 0 10px 25px rgba(22, 163, 74, 0.3);
+    }
+
+    .upgrade-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(22, 163, 74, 0.4);
+        color: white;
+    }
+
+    .badge-premium {
+        background: linear-gradient(90deg, #f59e0b, #d97706);
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: 800;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="premium-hero">
+    <div class="container">
+        <div class="mb-3">
+            <span class="badge-premium">Limited Time Offer</span>
+        </div>
+        <h1 style="font-size: 3.5rem; font-weight: 900; margin-bottom: 20px;">Unlock Full Potential</h1>
+        <p style="font-size: 1.25rem; opacity: 0.8; max-width: 600px; margin: 0 auto;">Join 5,000+ farmers using AI
+            AgriMarket Premium to maximize their yield and profits.</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="premium-card text-center">
+                <div
+                    style="font-weight: 800; color: #16a34a; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 2px;">
+                    Premium Plan</div>
+                <div class="price-tag">₹999<span>/year</span></div>
+
+                <div class="feature-list text-start">
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <div><strong>Live Market Prices:</strong> Access 100+ crops (instead of 10)</div>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <div><strong>Disease Detection:</strong> 100+ plant species supported</div>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <div><strong>Expert Soil treatment:</strong> Detailed step-by-step chemical dosages</div>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <div><strong>Advanced AI:</strong> Priority processing for all insights</div>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <div><strong>Ad-Free Experience:</strong> Clean, professional interface</div>
+                    </div>
+                </div>
+
+                <form action="{{ url_for('upgrade_premium') }}" method="POST">
+                    <button type="submit" class="upgrade-btn">
+                        Get Premium Now <i class="fas fa-crown ms-2"></i>
+                    </button>
+                </form>
+
+                <p style="margin-top: 20px; color: #94a3b8; font-size: 0.85rem;">Secure checkout. No hidden charges.
+                    Cancel anytime.</p>
+            </div>
+
+            <div class="text-center mt-5">
+                <h4 style="font-weight: 800; color: #1e293b;">Why Farmers Love Premium?</h4>
+                <div class="row g-4 mt-1">
+                    <div class="col-md-4">
+                        <div style="padding: 20px;">
+                            <i class="fas fa-chart-line fa-2x mb-3" style="color: #10b981;"></i>
+                            <h6 style="font-weight: 700;">20% ROI Increase</h6>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div style="padding: 20px;">
+                            <i class="fas fa-shield-alt fa-2x mb-3" style="color: #3b82f6;"></i>
+                            <h6 style="font-weight: 700;">Crop Insurance Tips</h6>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div style="padding: 20px;">
+                            <i class="fas fa-headset fa-2x mb-3" style="color: #f59e0b;"></i>
+                            <h6 style="font-weight: 700;">24/7 Expert Support</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

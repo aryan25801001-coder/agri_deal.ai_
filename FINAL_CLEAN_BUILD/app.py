@@ -1,14 +1,15 @@
+import os
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-import os
 
-app = Flask(__name__, template_folder=os.path.join(os.path.dirname(__file__), 'templates'))
+# Vercel setup
+app = Flask(__name__, template_folder='templates')
 app.config['SECRET_KEY'] = 'sih-submission-secret'
 
 # Vercel fix for SQLite - Use absolute path in /tmp
-if os.environ.get('VERCEL'):
+if os.environ.get('VERCEL') == '1' or os.environ.get('VERCEL_ENV'):
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/agri_market.db'
 else:
     basedir = os.path.abspath(os.path.dirname(__file__))
@@ -17,7 +18,16 @@ else:
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
-application = app # Alias for Vercel/WSGI handlers
+# application = app  # Explicitly using application alias for some WSGI handlers
+
+@app.route('/test')
+def test():
+    return "Application is up!"
+
+@app.errorhandler(500)
+def handle_500(e):
+    import traceback
+    return f"<h1>Internal Server Error</h1><pre>{traceback.format_exc()}</pre>", 500
 
 # Database Models
 class User(db.Model):
@@ -620,21 +630,18 @@ def is_authenticated():
 def inject_auth():
     return dict(is_authenticated=is_authenticated, username=lambda: session.get('username'))
 
-# Initialize database safely
-_db_initialized = False
-@app.before_request
-def startup():
-    global _db_initialized
-    if not _db_initialized:
-        try:
-            db.create_all()
-            _db_initialized = True
-        except Exception as e:
-            app.logger.error(f"DB Error: {e}")
+# STANDALONE DB Initializer - Visit /init-db once after deployment
+@app.route('/init-db')
+def manual_init_db():
+    try:
+        db.create_all()
+        return "Database created successfully!"
+    except Exception as e:
+        return f"DB Error: {e}"
 
 @app.route('/health')
 def health():
-    return {"status": "healthy", "database": str(app.config['SQLALCHEMY_DATABASE_URI'])}
+    return {"status": "up", "db": str(app.config['SQLALCHEMY_DATABASE_URI'])}
 
 @app.route('/soil_quality', methods=['GET', 'POST'])
 def soil_quality():

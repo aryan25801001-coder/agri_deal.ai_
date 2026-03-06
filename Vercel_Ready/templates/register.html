@@ -1,0 +1,372 @@
+{% extends "base.html" %}
+{% block title %}Register - AI AgriMarket{% endblock %}
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364) !important;
+        min-height: 100vh;
+    }
+
+    .auth-wrap {
+        min-height: calc(100vh - 76px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 16px;
+    }
+
+    .auth-card {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 28px;
+        overflow: hidden;
+        width: 100%;
+        max-width: 960px;
+        display: flex;
+        backdrop-filter: blur(16px);
+        box-shadow: 0 32px 100px rgba(0, 0, 0, 0.4);
+    }
+
+    .auth-left {
+        background: linear-gradient(160deg, #14532d 0%, #16a34a 60%, #059669 100%);
+        padding: 56px 38px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 380px;
+        flex-shrink: 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .auth-left::before {
+        content: '';
+        position: absolute;
+        top: -80px;
+        right: -80px;
+        width: 260px;
+        height: 260px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 50%;
+    }
+
+    .auth-left::after {
+        content: '';
+        position: absolute;
+        bottom: -60px;
+        left: -60px;
+        width: 180px;
+        height: 180px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 50%;
+    }
+
+    .auth-left h2 {
+        font-size: 2rem;
+        font-weight: 800;
+        color: white;
+        letter-spacing: -1px;
+        margin-bottom: 12px;
+        position: relative;
+    }
+
+    .auth-left p {
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 0.9rem;
+        line-height: 1.7;
+        position: relative;
+        margin-bottom: 24px;
+    }
+
+    .user-type-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin: 16px 0;
+        position: relative;
+    }
+
+    .ut-btn {
+        border: 2px solid rgba(255, 255, 255, 0.25);
+        border-radius: 14px;
+        padding: 16px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+
+    .ut-btn:hover,
+    .ut-btn.selected {
+        border-color: white;
+        background: rgba(255, 255, 255, 0.22);
+        transform: scale(1.04);
+    }
+
+    .ut-icon {
+        font-size: 2rem;
+        margin-bottom: 6px;
+    }
+
+    .ut-name {
+        font-weight: 700;
+        font-size: 0.88rem;
+    }
+
+    .ut-desc {
+        font-size: 0.72rem;
+        opacity: 0.7;
+    }
+
+    .auth-right {
+        padding: 44px 44px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .auth-right h3 {
+        font-size: 1.7rem;
+        font-weight: 800;
+        color: white;
+        letter-spacing: -0.5px;
+        margin-bottom: 4px;
+    }
+
+    .subtitle {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.88rem;
+        margin-bottom: 24px;
+    }
+
+    .form-row2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .auth-input-group {
+        margin-bottom: 16px;
+    }
+
+    .auth-input-group label {
+        display: block;
+        color: rgba(255, 255, 255, 0.65);
+        font-size: 0.82rem;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+
+    .auth-input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.07);
+        border: 1.5px solid rgba(255, 255, 255, 0.12);
+        border-radius: 12px;
+        padding: 12px 14px;
+        color: white;
+        font-size: 0.88rem;
+        transition: all 0.2s;
+        outline: none;
+    }
+
+    .auth-input:focus {
+        border-color: #16a34a;
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
+    }
+
+    .auth-input::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+    }
+
+    .auth-input option {
+        background: #1e3a40;
+    }
+
+    .auth-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #16a34a, #15803d);
+        border: none;
+        border-radius: 12px;
+        padding: 14px;
+        color: white;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 4px 20px rgba(22, 163, 74, 0.35);
+        margin-top: 4px;
+    }
+
+    .auth-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 32px rgba(22, 163, 74, 0.45);
+    }
+
+    .auth-link {
+        color: #86efac;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .auth-link:hover {
+        color: #bbf7d0;
+    }
+
+    .auth-divider {
+        border-color: rgba(255, 255, 255, 0.1);
+        margin: 20px 0;
+    }
+
+    .auth-footer-text {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.85rem;
+    }
+
+    .input-icon-wrap {
+        position: relative;
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 13px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 0.85rem;
+        pointer-events: none;
+    }
+
+    .input-icon-wrap .auth-input {
+        padding-left: 36px;
+    }
+
+    @media (max-width:768px) {
+        .auth-left {
+            display: none;
+        }
+
+        .form-row2 {
+            grid-template-columns: 1fr;
+        }
+
+        .auth-right {
+            padding: 36px 24px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+    <div class="auth-card">
+        <!-- Left Panel -->
+        <div class="auth-left">
+            <div style="font-size:2.4rem; margin-bottom:14px; position:relative;">🌾</div>
+            <h2>Join AI AgriMarket</h2>
+            <p>India's smartest agricultural marketplace. Register as a farmer or buyer and start today.</p>
+            <div style="background:rgba(255,255,255,0.1); border-radius:14px; padding:18px; position:relative;">
+                <div style="font-weight:700; color:#bbf7d0; margin-bottom:12px; font-size:0.88rem;">I am a...</div>
+                <div class="user-type-grid">
+                    <div class="ut-btn selected" id="ut-farmer" onclick="selectType('farmer')">
+                        <div class="ut-icon">🧑‍🌾</div>
+                        <div class="ut-name">Farmer</div>
+                        <div class="ut-desc">Sell my produce</div>
+                    </div>
+                    <div class="ut-btn" id="ut-buyer" onclick="selectType('buyer')">
+                        <div class="ut-icon">🛒</div>
+                        <div class="ut-name">Buyer</div>
+                        <div class="ut-desc">Buy fresh produce</div>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top:20px; position:relative;">
+                <div
+                    style="color:rgba(255,255,255,0.6); font-size:0.82rem; line-height:1.8; display:flex; flex-direction:column; gap:8px;">
+                    <div>✅ Free registration, no hidden charges</div>
+                    <div>✅ AI price predictions & soil tests</div>
+                    <div>✅ Connect with 1000+ verified buyers</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="auth-right">
+            <div style="font-size:1.8rem; margin-bottom:8px;">👋</div>
+            <h3>Create Account</h3>
+            <div class="subtitle">Fill in your details to get started</div>
+            <form method="POST">
+                <input type="hidden" name="user_type" id="userTypeInput" value="farmer">
+                <div class="form-row2">
+                    <div class="auth-input-group">
+                        <label>Username *</label>
+                        <div class="input-icon-wrap">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" name="username" class="auth-input" placeholder="yourname" required>
+                        </div>
+                    </div>
+                    <div class="auth-input-group">
+                        <label>Email *</label>
+                        <div class="input-icon-wrap">
+                            <i class="fas fa-envelope input-icon"></i>
+                            <input type="email" name="email" class="auth-input" placeholder="you@email.com" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="auth-input-group">
+                    <label>Password *</label>
+                    <div class="input-icon-wrap">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" name="password" class="auth-input" placeholder="Min. 6 characters"
+                            required>
+                    </div>
+                </div>
+                <div class="form-row2">
+                    <div class="auth-input-group">
+                        <label>Phone (optional)</label>
+                        <div class="input-icon-wrap">
+                            <i class="fas fa-phone input-icon"></i>
+                            <input type="tel" name="phone" class="auth-input" placeholder="+91 XXXXX XXXXX">
+                        </div>
+                    </div>
+                    <div class="auth-input-group">
+                        <label>State</label>
+                        <div class="input-icon-wrap">
+                            <i class="fas fa-map-marker-alt input-icon"></i>
+                            <input type="text" name="state" class="auth-input" placeholder="e.g. Punjab">
+                        </div>
+                    </div>
+                </div>
+                <div class="auth-input-group">
+                    <label>Address (optional)</label>
+                    <div class="input-icon-wrap">
+                        <i class="fas fa-home input-icon"></i>
+                        <textarea name="address" class="auth-input" rows="2" placeholder="Village / City, District"
+                            style="resize:none; padding-top:12px; padding-left:36px;"></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="auth-btn">
+                    <i class="fas fa-user-plus me-2"></i>Create My Account
+                </button>
+            </form>
+            <hr class="auth-divider">
+            <div class="auth-footer-text">
+                Already have an account? <a href="{{ url_for('login') }}" class="auth-link">Sign in →</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    function selectType(t) {
+        document.getElementById('userTypeInput').value = t;
+        document.getElementById('ut-farmer').classList.toggle('selected', t === 'farmer');
+        document.getElementById('ut-buyer').classList.toggle('selected', t === 'buyer');
+    }
+</script>
+{% endblock %}
+{% endblock %}

@@ -308,145 +308,140 @@
             {% for item in prices %}
             <div class="col-6 col-md-4 col-lg-2 price-card-col">
                 <div
-                    class="price-card {% if item.change > 2 %}up{% elif item.change < -2 %}down{% else %}flat{% endif %}">
+                    class="price-card {% if item.change > 0 %}up{% elif item.change < 0 %}down{% else %}flat{% endif %}">
                     <div class="price-emoji">{{ item.emoji }}</div>
                     <div class="price-name">{{ item.commodity }}</div>
-                    <div class="price-unit">Per {{ item.unit }}</div>
+                    <div class="price-unit">per {{ item.unit }}</div>
                     <div class="price-amount">₹{{ item.price }}</div>
                     <span
                         class="price-change {% if item.change > 0 %}change-up{% elif item.change < 0 %}change-down{% else %}change-flat{% endif %}">
-                        {% if item.change > 0 %}+{% endif %}{{ item.change }}%
-                    </span>
+                        {% if item.change > 0 %}↑ +{{ item.change }}%{% elif item.change < 0 %}↓ {{ item.change }}%{%
+                            else %}→ 0.0%{% endif %} </span>
+                            <!-- Mini sparkline bars -->
+                            <div class="price-mini-chart">
+                                {% for h in [60,75,55,80,70,85,65,90] %}
+                                <div class="bar"
+                                    style="height:{{ h * 0.4 }}px; background:{% if item.change >= 0 %}#16a34a{% else %}#dc2626{% endif %};">
+                                </div>
+                                {% endfor %}
+                            </div>
                 </div>
             </div>
             {% endfor %}
+        </div>
+        <div id="no-cards-msg" style="display:none; text-align:center; padding:20px; color:#64748b; font-weight:600;">No
+            items found matching your search.</div>
+    </div>
 
-            {% if not is_premium %}
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="price-card" style="border: 2px dashed #f59e0b; background: #fffbeb; cursor: pointer;"
-                    onclick="location.href='{{ url_for('upgrade_premium') }}'">
-                    <div class="price-emoji">⭐</div>
-                    <div class="price-name" style="color:#d97706;">Unlock 90+ More</div>
-                    <div class="price-unit">Premium Only</div>
-                    <div class="price-amount" style="font-size: 1.2rem; color:#d97706;">UPGRADE</div>
-                    <span class="price-change change-flat" style="background:#fef3c7; color:#d97706;">PRO</span>
-                </div>
+    <!-- Detailed Table -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-8">
+            <h4 style="font-weight:800; margin-bottom:4px;">📋 Detailed <span style="color:#16a34a;">Price List</span>
+            </h4>
+            <div
+                style="width:40px; height:4px; background:linear-gradient(90deg,#16a34a,#f59e0b); border-radius:2px; margin-bottom:20px;">
             </div>
-            {% endif %}
-        </div>
-    </div>
-    <div id="no-cards-msg" style="display:none; text-align:center; padding:20px; color:#64748b; font-weight:600;">No
-        items found matching your search.</div>
-</div>
-
-<!-- Detailed Table -->
-<div class="row g-4 mb-5">
-    <div class="col-lg-8">
-        <h4 style="font-weight:800; margin-bottom:4px;">📋 Detailed <span style="color:#16a34a;">Price List</span>
-        </h4>
-        <div
-            style="width:40px; height:4px; background:linear-gradient(90deg,#16a34a,#f59e0b); border-radius:2px; margin-bottom:20px;">
-        </div>
-        <div class="prices-table">
-            <table class="table mb-0" id="prices-table-data">
-                <thead>
-                    <tr>
-                        <th>Commodity</th>
-                        <th>Price (₹)</th>
-                        <th>Unit</th>
-                        <th>Change</th>
-                        <th>Trend</th>
-                        <th>Signal</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in prices %}
-                    <tr class="table-row-item">
-                        <td>
-                            <div class="commodity-name">
-                                <span style="font-size:1.4rem;">{{ item.emoji }}</span>
-                                <span class="row-c-name">{{ item.commodity }}</span>
-                            </div>
-                        </td>
-                        <td><strong style="color:#1e293b; font-size:1.05rem;">₹{{ item.price }}</strong></td>
-                        <td><span style="color:#64748b;">{{ item.unit }}</span></td>
-                        <td>
-                            <span
-                                style="padding:4px 12px; border-radius:20px; font-weight:700; font-size:0.82rem;
+            <div class="prices-table">
+                <table class="table mb-0" id="prices-table-data">
+                    <thead>
+                        <tr>
+                            <th>Commodity</th>
+                            <th>Price (₹)</th>
+                            <th>Unit</th>
+                            <th>Change</th>
+                            <th>Trend</th>
+                            <th>Signal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in prices %}
+                        <tr class="table-row-item">
+                            <td>
+                                <div class="commodity-name">
+                                    <span style="font-size:1.4rem;">{{ item.emoji }}</span>
+                                    <span class="row-c-name">{{ item.commodity }}</span>
+                                </div>
+                            </td>
+                            <td><strong style="color:#1e293b; font-size:1.05rem;">₹{{ item.price }}</strong></td>
+                            <td><span style="color:#64748b;">{{ item.unit }}</span></td>
+                            <td>
+                                <span
+                                    style="padding:4px 12px; border-radius:20px; font-weight:700; font-size:0.82rem;
                                     background:{% if item.change > 0 %}#dcfce7; color:#16a34a{% elif item.change < 0 %}#fee2e2; color:#dc2626{% else %}#f1f5f9; color:#64748b{% endif %};">
-                                {% if item.change > 0 %}+{% endif %}{{ item.change }}%
-                            </span>
-                        </td>
-                        <td>
-                            {% if item.change > 0 %}<i class="fas fa-arrow-trend-up text-success fa-lg"></i>
-                            {% elif item.change < 0 %}<i class="fas fa-arrow-trend-down text-danger fa-lg"></i>
-                                {% else %}<i class="fas fa-minus text-muted"></i>{% endif %}
-                        </td>
-                        <td>
-                            {% if item.change > 3 %}<span
-                                style="background:#dcfce7; color:#15803d; padding:3px 10px; border-radius:8px; font-size:0.76rem; font-weight:700;">BUY
-                                / HOLD</span>
-                            {% elif item.change < -2 %}<span
-                                style="background:#fee2e2; color:#dc2626; padding:3px 10px; border-radius:8px; font-size:0.76rem; font-weight:700;">
-                                SELL NOW</span>
-                                {% else %}<span
-                                    style="background:#f1f5f9; color:#64748b; padding:3px 10px; border-radius:8px; font-size:0.76rem; font-weight:700;">WATCH</span>{%
-                                endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                                    {% if item.change > 0 %}+{% endif %}{{ item.change }}%
+                                </span>
+                            </td>
+                            <td>
+                                {% if item.change > 0 %}<i class="fas fa-arrow-trend-up text-success fa-lg"></i>
+                                {% elif item.change < 0 %}<i class="fas fa-arrow-trend-down text-danger fa-lg"></i>
+                                    {% else %}<i class="fas fa-minus text-muted"></i>{% endif %}
+                            </td>
+                            <td>
+                                {% if item.change > 3 %}<span
+                                    style="background:#dcfce7; color:#15803d; padding:3px 10px; border-radius:8px; font-size:0.76rem; font-weight:700;">BUY
+                                    / HOLD</span>
+                                {% elif item.change < -2 %}<span
+                                    style="background:#fee2e2; color:#dc2626; padding:3px 10px; border-radius:8px; font-size:0.76rem; font-weight:700;">
+                                    SELL NOW</span>
+                                    {% else %}<span
+                                        style="background:#f1f5f9; color:#64748b; padding:3px 10px; border-radius:8px; font-size:0.76rem; font-weight:700;">WATCH</span>{%
+                                    endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div id="no-table-msg"
+                style="display:none; text-align:center; padding:20px; background:#f8fafc; border-radius:12px; border:1px solid #e2e8f0; color:#64748b; font-weight:600; margin-top:20px;">
+                No detailed prices found.</div>
+            <p style="color:#94a3b8; font-size:0.76rem; margin-top:8px;"><i class="fas fa-info-circle me-1"></i>Prices
+                updated daily from major mandis across India.</p>
         </div>
-        <div id="no-table-msg"
-            style="display:none; text-align:center; padding:20px; background:#f8fafc; border-radius:12px; border:1px solid #e2e8f0; color:#64748b; font-weight:600; margin-top:20px;">
-            No detailed prices found.</div>
-        <p style="color:#94a3b8; font-size:0.76rem; margin-top:8px;"><i class="fas fa-info-circle me-1"></i>Prices
-            updated daily from major mandis across India.</p>
+
+        <div class="col-lg-4">
+            <h4 style="font-weight:800; margin-bottom:4px;">💡 Market <span style="color:#16a34a;">Insights</span></h4>
+            <div
+                style="width:40px; height:4px; background:linear-gradient(90deg,#16a34a,#f59e0b); border-radius:2px; margin-bottom:20px;">
+            </div>
+
+            <div class="insight-card bg-success bg-opacity-10 border border-success border-opacity-25 mb-3">
+                <div style="font-weight:700; color:#15803d; margin-bottom:10px;"><i
+                        class="fas fa-arrow-up me-2"></i>Rising Prices</div>
+                <ul style="color:#166534; font-size:0.88rem; padding-left:18px; margin:0;">
+                    <li>🧅 Onion — rising fast, good to sell</li>
+                    <li>🍅 Tomato — seasonal demand spike</li>
+                    <li>🌶️ Spices — festive season demand</li>
+                </ul>
+            </div>
+
+            <div class="insight-card bg-danger bg-opacity-10 border border-danger border-opacity-25 mb-3">
+                <div style="font-weight:700; color:#dc2626; margin-bottom:10px;"><i
+                        class="fas fa-arrow-down me-2"></i>Falling Prices</div>
+                <ul style="color:#991b1b; font-size:0.88rem; padding-left:18px; margin:0;">
+                    <li>🥔 Potato — slight dip, sell now</li>
+                    <li>🍚 Rice — oversupply in market</li>
+                </ul>
+            </div>
+
+            <div class="insight-card bg-warning bg-opacity-10 border border-warning border-opacity-25 mb-3">
+                <div style="font-weight:700; color:#d97706; margin-bottom:10px;"><i
+                        class="fas fa-balance-scale me-2"></i>Stable Prices</div>
+                <ul style="color:#92400e; font-size:0.88rem; padding-left:18px; margin:0;">
+                    <li>🌾 Wheat — government MSP stable</li>
+                    <li>🥛 Milk — demand-supply balanced</li>
+                </ul>
+            </div>
+
+            <div
+                style="background:linear-gradient(135deg,#1e293b,#14532d); border-radius:16px; padding:20px; color:white;">
+                <div style="font-weight:700; margin-bottom:8px;">🤖 AI Recommendation</div>
+                <p style="font-size:0.85rem; color:rgba(255,255,255,0.7); margin:0;">Best selling window: <strong
+                        style="color:#4ade80;">Next 2-3 weeks</strong> for vegetables. Hold grains for Rabi season price
+                    rise. Diversify crops to reduce risk.</p>
+            </div>
+        </div>
     </div>
-
-    <div class="col-lg-4">
-        <h4 style="font-weight:800; margin-bottom:4px;">💡 Market <span style="color:#16a34a;">Insights</span></h4>
-        <div
-            style="width:40px; height:4px; background:linear-gradient(90deg,#16a34a,#f59e0b); border-radius:2px; margin-bottom:20px;">
-        </div>
-
-        <div class="insight-card bg-success bg-opacity-10 border border-success border-opacity-25 mb-3">
-            <div style="font-weight:700; color:#15803d; margin-bottom:10px;"><i class="fas fa-arrow-up me-2"></i>Rising
-                Prices</div>
-            <ul style="color:#166534; font-size:0.88rem; padding-left:18px; margin:0;">
-                <li>🧅 Onion — rising fast, good to sell</li>
-                <li>🍅 Tomato — seasonal demand spike</li>
-                <li>🌶️ Spices — festive season demand</li>
-            </ul>
-        </div>
-
-        <div class="insight-card bg-danger bg-opacity-10 border border-danger border-opacity-25 mb-3">
-            <div style="font-weight:700; color:#dc2626; margin-bottom:10px;"><i
-                    class="fas fa-arrow-down me-2"></i>Falling Prices</div>
-            <ul style="color:#991b1b; font-size:0.88rem; padding-left:18px; margin:0;">
-                <li>🥔 Potato — slight dip, sell now</li>
-                <li>🍚 Rice — oversupply in market</li>
-            </ul>
-        </div>
-
-        <div class="insight-card bg-warning bg-opacity-10 border border-warning border-opacity-25 mb-3">
-            <div style="font-weight:700; color:#d97706; margin-bottom:10px;"><i
-                    class="fas fa-balance-scale me-2"></i>Stable Prices</div>
-            <ul style="color:#92400e; font-size:0.88rem; padding-left:18px; margin:0;">
-                <li>🌾 Wheat — government MSP stable</li>
-                <li>🥛 Milk — demand-supply balanced</li>
-            </ul>
-        </div>
-
-        <div style="background:linear-gradient(135deg,#1e293b,#14532d); border-radius:16px; padding:20px; color:white;">
-            <div style="font-weight:700; margin-bottom:8px;">🤖 AI Recommendation</div>
-            <p style="font-size:0.85rem; color:rgba(255,255,255,0.7); margin:0;">Best selling window: <strong
-                    style="color:#4ade80;">Next 2-3 weeks</strong> for vegetables. Hold grains for Rabi season price
-                rise. Diversify crops to reduce risk.</p>
-        </div>
-    </div>
-</div>
 </div>
 
 {% block extra_js %}
@@ -457,7 +452,7 @@
     searchInput.addEventListener('focus', () => searchContainer.classList.add('focused'));
     searchInput.addEventListener('blur', () => searchContainer.classList.remove('focused'));
 
-    const DEFAULT_SHOW = {% if is_premium %}200{% else %} 10{% endif %}; // Show more for premium
+    const DEFAULT_SHOW = 6; // Show top 6 crops by default
 
     function initMarket() {
         const cards = document.querySelectorAll('.price-card-col');

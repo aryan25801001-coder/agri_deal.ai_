@@ -439,26 +439,20 @@
         {% endif %}
       </div>
 
-      {% for crop in result.crop_suggestions %}<span class="crop-chip">{{ crop }}</span>{% endfor %}
-      {% if not is_premium %}
-      <div class="mt-3 text-center">
-        <a href="{{ url_for('upgrade_premium') }}" class="btn btn-sm btn-outline-warning"
-          style="border-radius:10px; font-weight:700;">
-          Unlock 20+ More Crop Suggestions
-        </a>
+      <div class="result-section">
+        <h6>🌾 Best Crops for Your Soil</h6>
+        {% for crop in result.crop_suggestions %}<span class="crop-chip">{{ crop }}</span>{% endfor %}
+      </div>
+
+      {% else %}
+      <div class="empty-state">
+        <div style="font-size:4rem; margin-bottom:16px;">🧪</div>
+        <h4 style="color:#44403c; font-weight:700;">Run Soil Analysis</h4>
+        <p style="color:#78716c; max-width:360px; margin:auto;">Enter your soil NPK values, pH, and moisture data on the
+          left to get a complete AI-powered soil health report.</p>
       </div>
       {% endif %}
     </div>
-
-    {% else %}
-    <div class="empty-state">
-      <div style="font-size:4rem; margin-bottom:16px;">🧪</div>
-      <h4 style="color:#44403c; font-weight:700;">Run Soil Analysis</h4>
-      <p style="color:#78716c; max-width:360px; margin:auto;">Enter your soil NPK values, pH, and moisture data on the
-        left to get a complete AI-powered soil health report.</p>
-    </div>
-    {% endif %}
   </div>
-</div>
 </div>
 {% endblock %}

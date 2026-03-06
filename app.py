@@ -5,11 +5,15 @@ from datetime import datetime
 import os
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your-secret-key-change-this'
-if os.environ.get('VERCEL') == '1' or os.environ.get('VERCEL_ENV'):
+app.config['SECRET_KEY'] = 'sih-submission-secret'
+
+# Vercel fix for SQLite
+if os.environ.get('VERCEL'):
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/agri_market.db'
 else:
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///agri_market.db'
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'agri_market.db')
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -23,6 +27,7 @@ class User(db.Model):
     user_type = db.Column(db.String(20), nullable=False)  # 'farmer' or 'buyer'
     phone = db.Column(db.String(20))
     address = db.Column(db.Text)
+    membership = db.Column(db.String(20), default='basic') # 'basic' or 'premium'
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 class Product(db.Model):
@@ -186,7 +191,8 @@ def register():
             password=hashed_password,
             user_type=user_type,
             phone=phone,
-            address=address
+            address=address,
+            membership='basic'
         )
         db.session.add(new_user)
         db.session.commit()
@@ -377,6 +383,10 @@ def ai_predictions():
         {'category': 'Spices', 'icon': 'fa-pepper-hot', 'current_price': 120, 'predicted_price': 135, 'trend': 'up', 'confidence': 82, 'change': '+12.5%'},
         {'category': 'Dairy', 'icon': 'fa-cheese', 'current_price': 45, 'predicted_price': 48, 'trend': 'up', 'confidence': 88, 'change': '+6.7%'},
         {'category': 'Pulses', 'icon': 'fa-circle', 'current_price': 85, 'predicted_price': 79, 'trend': 'down', 'confidence': 74, 'change': '-7.1%'},
+        {'category': 'Cotton', 'icon': 'fa-tshirt', 'current_price': 6200, 'predicted_price': 6800, 'trend': 'up', 'confidence': 80, 'change': '+9.7%'},
+        {'category': 'Sugarcane', 'icon': 'fa-candy-cane', 'current_price': 350, 'predicted_price': 375, 'trend': 'up', 'confidence': 92, 'change': '+7.1%'},
+        {'category': 'Poultry', 'icon': 'fa-egg', 'current_price': 180, 'predicted_price': 165, 'trend': 'down', 'confidence': 75, 'change': '-8.3%'},
+        {'category': 'Fishery', 'icon': 'fa-fish', 'current_price': 450, 'predicted_price': 490, 'trend': 'up', 'confidence': 84, 'change': '+8.9%'},
     ]
     # Crop recommendations by state & season
     crop_data = {
@@ -396,7 +406,26 @@ def ai_predictions():
         'Telangana': {'Kharif': ['Rice','Cotton','Maize','Soybean'], 'Rabi': ['Chickpea','Sunflower','Jowar','Maize']},
         'Himachal Pradesh': {'Kharif': ['Maize','Rice','Potato','Ginger'], 'Rabi': ['Wheat','Barley','Peas','Rapeseed']},
     }
-    return render_template('ai_predictions.html', predictions=predictions, crop_data=crop_data)
+
+    # Membership check
+    is_premium = False
+    if 'user_id' in session:
+        try:
+            user = User.query.get(session['user_id'])
+            if user and user.membership == 'premium':
+                is_premium = True
+        except:
+            pass
+    
+    if not is_premium:
+        predictions = predictions[:3]  # Basic only see 3 categories
+        # Keep only top 3 states for basic
+        limited_crop_data = {}
+        for state in list(crop_data.keys())[:3]:
+            limited_crop_data[state] = crop_data[state]
+        crop_data = limited_crop_data
+
+    return render_template('ai_predictions.html', predictions=predictions, crop_data=crop_data, is_premium=is_premium)
 
 @app.route('/market_prices')
 def market_prices():
@@ -469,7 +498,22 @@ def market_prices():
         {'commodity': 'Ghee', 'emoji': '🫙', 'price': 480, 'unit': 'kg', 'change': 1.5, 'category': 'Dairy'},
         {'commodity': 'Butter', 'emoji': '🧈', 'price': 420, 'unit': 'kg', 'change': 0.5, 'category': 'Dairy'},
     ]
-    return render_template('market_prices.html', prices=prices)
+    
+    # Tiered limits for Market Prices
+    is_premium = False
+    if 'user_id' in session:
+        try:
+            user = User.query.get(session['user_id'])
+            if user and user.membership == 'premium':
+                is_premium = True
+        except:
+            is_premium = False
+    
+    if not is_premium:
+        # Basic users only see top 10 commodities
+        prices = prices[:10]
+        
+    return render_template('market_prices.html', prices=prices, is_premium=is_premium)
 
 
 INDIA_LOCATIONS = {
@@ -606,7 +650,20 @@ def is_authenticated():
 # Make is_authenticated available to templates
 @app.context_processor
 def inject_auth():
-    return dict(is_authenticated=is_authenticated, username=lambda: session.get('username'))
+    is_premium = False
+    if 'user_id' in session:
+        try:
+            user = User.query.get(session['user_id'])
+            if user and user.membership == 'premium':
+                is_premium = True
+        except:
+            pass
+    return dict(
+        is_authenticated=is_authenticated, 
+        username=lambda: session.get('username'),
+        is_premium=is_premium,
+        current_user_obj=lambda: User.query.get(session['user_id']) if 'user_id' in session else None
+    )
 
 # Initialize database
 try:
@@ -709,6 +766,21 @@ def soil_quality():
             else:
                 crop_suggestions = ["Cotton", "Sugarcane", "Sorghum", "Mustard"]
 
+            # Membership check for soil treatment
+            is_premium = False
+            if 'user_id' in session:
+                user = User.query.get(session['user_id'])
+                if user and user.membership == 'premium':
+                    is_premium = True
+
+            # If basic, limit recommendations
+            if not is_premium:
+                if len(recommendations) > 1:
+                    recommendations = recommendations[:1]
+                    recommendations.append("⭐ Upgrade to Premium for detailed expert soil treatments and multi-stage recovery plans.")
+                if len(crop_suggestions) > 2:
+                    crop_suggestions = crop_suggestions[:2]
+
             result = {
                 'score': score,
                 'rating': rating,
@@ -725,7 +797,8 @@ def soil_quality():
                 'issues': issues,
                 'recommendations': recommendations,
                 'crop_suggestions': crop_suggestions,
-                'crop': crop
+                'crop': crop,
+                'is_premium': is_premium
             }
         except Exception as e:
             flash('Please enter valid numeric values.')
@@ -816,6 +889,16 @@ def disease_detection():
         crop_lower = crop_type.lower()
         selected_diseases = disease_db.get(crop_lower, disease_db['tomato'])
 
+        # Membership check
+        is_premium = False
+        if 'user_id' in session:
+            try:
+                user = User.query.get(session['user_id'])
+                if user and user.membership == 'premium':
+                    is_premium = True
+            except:
+                pass
+
         # Match based on symptoms
         best_match = selected_diseases[0]
         best_score = 0
@@ -825,13 +908,36 @@ def disease_detection():
                 best_score = match_score
                 best_match = disease
 
+        # Limit details for basic users
+        if not is_premium:
+            # Mask some fields for basic
+            best_match = best_match.copy()
+            best_match['treatment'] = [best_match['treatment'][0], "⭐ Upgrade to Premium for full expert treatment & chemical dosages."]
+            best_match['prevention'] = "⭐ Available for Premium Users"
+
         result = {
             'crop': crop_type,
             'disease': best_match,
-            'symptoms_entered': symptoms
+            'symptoms_entered': symptoms,
+            'is_premium': is_premium
         }
 
     return render_template('disease_detection.html', result=result)
+
+@app.route('/upgrade_premium', methods=['GET', 'POST'])
+def upgrade_premium():
+    if 'user_id' not in session:
+        flash('Please login first')
+        return redirect(url_for('login'))
+    
+    user = User.query.get(session['user_id'])
+    if request.method == 'POST':
+        user.membership = 'premium'
+        db.session.commit()
+        flash('Welcome to Premium! All limits have been removed.')
+        return redirect(url_for('dashboard'))
+    
+    return render_template('upgrade_premium.html', user=user)
 
 
 if __name__ == '__main__':

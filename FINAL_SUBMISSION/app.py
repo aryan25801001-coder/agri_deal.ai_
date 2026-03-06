@@ -2,22 +2,29 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-import os
+# Ultra-flexible template path for Vercel
+curr_dir = os.path.dirname(os.path.abspath(__file__))
+tmpl_dir = os.path.join(curr_dir, 'templates')
 
-app = Flask(__name__, template_folder=os.path.join(os.path.dirname(__file__), 'templates'))
+app = Flask(__name__, template_folder=tmpl_dir)
 app.config['SECRET_KEY'] = 'sih-submission-secret'
 
 # Vercel fix for SQLite - Use absolute path in /tmp
-if os.environ.get('VERCEL'):
+if os.environ.get('VERCEL') or os.environ.get('VERCEL_ENV'):
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/agri_market.db'
 else:
-    basedir = os.path.abspath(os.path.dirname(__file__))
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'agri_market.db')
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(curr_dir, 'agri_market.db')
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
-application = app # Alias for Vercel/WSGI handlers
+application = app # Alias for Vercel
+
+@app.errorhandler(500)
+@app.route('/debug-error')
+def handle_500(e=None):
+    import traceback
+    return f"<h1>Internal Server Error</h1><pre>{traceback.format_exc()}</pre>", 500
 
 # Database Models
 class User(db.Model):

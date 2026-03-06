@@ -288,22 +288,11 @@
                 </p>
             </div>
             <div>
-                <div class="user-badge mb-2">
+                <div class="user-badge">
                     {% if current_user.user_type == 'farmer' %}
                     <i class="fas fa-tractor text-success" style="color:#86efac !important;"></i> Farmer Account
                     {% else %}
                     <i class="fas fa-shopping-basket text-info" style="color:#93c5fd !important;"></i> Buyer Account
-                    {% endif %}
-                </div>
-                <div class="user-badge"
-                    style="background:{% if is_premium %}linear-gradient(90deg, #f59e0b, #d97706){% else %}rgba(255,255,255,0.15){% endif %}; border-color:{% if is_premium %}#f59e0b{% else %}rgba(255,255,255,0.2){% endif %}; cursor: pointer;"
-                    onclick="location.href='{{ url_for('upgrade_premium') }}'">
-                    {% if is_premium %}
-                    <i class="fas fa-crown ms-1" style="color:white !important;"></i> <span
-                        style="color:white !important;">Premium Member</span>
-                    {% else %}
-                    <i class="fas fa-star ms-1" style="color:#94a3b8 !important;"></i> <span
-                        style="color:#e2e8f0 !important;">Basic User (Upgrade)</span>
                     {% endif %}
                 </div>
             </div>
