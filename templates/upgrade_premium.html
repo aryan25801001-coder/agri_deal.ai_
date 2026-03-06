@@ -168,31 +168,29 @@
                             </label>
 
                             <div id="upi_form" class="mt-3"
-                                style="display: block; padding: 10px 15px; background: white; border-radius: 12px; border: 1px solid #e2e8f0;">
-                                <div class="d-flex flex-wrap gap-3 mb-4 justify-content-center pt-2">
+                                style="display: block; padding: 15px; background: white; border-radius: 12px; border: 1px solid #e2e8f0;">
+                                <div class="d-flex flex-wrap gap-4 mb-4 justify-content-center pt-2">
                                     <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg"
-                                        style="height: 28px; width: auto; object-fit: contain;" alt="GPay">
+                                        style="height: 35px; width: auto;" alt="GPay">
                                     <img src="https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.svg"
-                                        style="height: 28px; width: auto; object-fit: contain;" alt="PhonePe">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Paytm_Logo_%28standalone%29.svg"
-                                        style="height: 14px; margin-top: 6px; width: auto; object-fit: contain;"
-                                        alt="Paytm">
+                                        style="height: 35px; width: auto;" alt="PhonePe">
                                     <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/UPI-Logo-vector.svg"
-                                        style="height: 20px; margin-top: 3px; width: auto; object-fit: contain;"
-                                        alt="BHIM">
+                                        style="height: 25px; margin-top: 5px;" alt="BHIM">
                                 </div>
                                 <label class="form-label text-dark" style="font-size: 0.95rem; font-weight: 700;">Enter
                                     your UPI ID / VPA</label>
                                 <div class="input-group mb-2">
                                     <input type="text" class="form-control" id="upi_id"
                                         placeholder="e.g. 9876543210@ybl"
-                                        style="border-radius: 8px 0 0 8px; border: 2px solid #e2e8f0; font-size: 1.05rem;">
+                                        style="border-radius: 8px 0 0 8px; border: 2px solid #e2e8f0; font-size: 1.05rem;"
+                                        value="aryan@upi">
                                     <span class="input-group-text bg-light fw-bold text-success"
                                         style="border-radius: 0 8px 8px 0; border: 2px solid #e2e8f0; border-left: none;">@upi</span>
                                 </div>
-                                <small class="text-muted" style="font-size: 0.8rem;"><i
-                                        class="fas fa-info-circle me-1"></i> Open your UPI App and approve the payment
-                                    request.</small>
+                                <div class="alert alert-info py-2 mt-3" style="font-size: 0.8rem; border-radius: 10px;">
+                                    <i class="fas fa-mobile-alt me-2"></i> On mobile? This will open your default UPI
+                                    app.
+                                </div>
                             </div>
                         </div>
 
@@ -269,32 +267,42 @@
 
                 <form id="paymentFormSubmit" action="{{ url_for('upgrade_premium') }}" method="POST">
                     <button type="button" class="upgrade-btn" onclick="processPayment()">
-                        Pay Securely ₹999 <i class="fas fa-lock ms-2"></i>
+                        Proceed to Unlock Premium <i class="fas fa-arrow-right ms-2"></i>
                     </button>
                 </form>
 
-                <p style="margin-top: 20px; color: #94a3b8; font-size: 0.85rem;">Secured by Razorpay. Your payment
-                    details are fully encrypted.</p>
+                <p style="margin-top: 20px; color: #94a3b8; font-size: 0.85rem;">Secured Gateways. Total: ₹999.00</p>
             </div>
 
-            <!-- Loading Overlay for Realistic Payment Processing -->
+            <!-- Realistic Mobile Payment Overlay -->
             <div id="paymentLoader"
-                style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.98); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
-                <div class="spinner-border text-success" role="status"
-                    style="width: 4rem; height: 4rem; margin-bottom: 25px;"></div>
-                <h3 id="paymentStatusTit" style="font-weight: 800; color: #1e293b;">Initializing Secure Gateway...</h3>
-                <p id="paymentStatusSub" style="color: #64748b; font-size: 1.1rem; max-width: 400px; line-height: 1.6;">
-                    Please do not close or refresh this page.</p>
-                <div style="margin-top: 30px; display: flex; gap: 20px;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/22/PCI_DSS.svg"
-                        style="height: 35px; opacity: 0.8;" alt="PCI DSS">
+                style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9999; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px;">
+                <div id="loaderUI">
+                    <div class="spinner-border text-success" role="status"
+                        style="width: 4rem; height: 4rem; margin-bottom: 25px;"></div>
+                    <h3 id="paymentStatusTit" style="font-weight: 800; color: #1e293b;">Connecting to App...</h3>
+                    <p id="paymentStatusSub"
+                        style="color: #64748b; font-size: 1.1rem; max-width: 400px; line-height: 1.6;">Verifying with
+                        GPay/PhonePe App Interface.</p>
+                </div>
+
+                <div id="qrUI" style="display: none;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"
+                        style="width: 200px; height: 200px; margin-bottom: 20px;" alt="QR Code">
+                    <h4 style="font-weight: 800;">Scan with UPI App</h4>
+                    <p class="text-muted">Total: ₹999.00 to agri_deal@bank</p>
+                    <div class="alert alert-warning py-1" style="font-size: 0.8rem;">
+                        Waiting for PIN entry and authorization...
+                    </div>
+                </div>
+
+                <div style="margin-top: 50px;">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/e/e3/Razorpay_logo.svg"
-                        style="height: 30px; opacity: 0.8; margin-top: 2px;" alt="Razorpay">
+                        style="height: 25px; opacity: 0.6;" alt="Razorpay">
                 </div>
             </div>
 
             <script>
-                // Toggle forms UI
                 function togglePaymentForm(method) {
                     if (method === 'upi') {
                         document.getElementById('upi_form').style.display = 'block';
@@ -305,12 +313,12 @@
                     }
                 }
 
-                // Simulate Realistic Checking Process
                 function processPayment() {
+                    const upiId = document.getElementById('upi_id').value.trim();
                     const isUPI = document.getElementById('mode_upi').checked;
 
-                    if (isUPI && document.getElementById('upi_id').value.trim() === '') {
-                        alert("Please enter a valid UPI ID (e.g., 9876543210@ybl)");
+                    if (isUPI && upiId === '') {
+                        alert("Please enter a valid UPI ID");
                         return;
                     }
 
@@ -319,27 +327,35 @@
                     const uiTit = document.getElementById('paymentStatusTit');
                     const uiSub = document.getElementById('paymentStatusSub');
 
+                    // If Mobile & UPI, try to open Deep Link
+                    if (isUPI && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                        const upiLink = `upi://pay?pa=${upiId}&pn=AI_AgriMarket&am=999.00&cu=INR&tn=AI_Market_Premium`;
+                        window.location.href = upiLink;
+                    } else if (isUPI) {
+                        // On PC, show QR mock
+                        setTimeout(() => {
+                            document.getElementById('loaderUI').style.display = 'none';
+                            document.getElementById('qrUI').style.display = 'block';
+                        }, 1500);
+                    }
+
                     const steps = [
-                        { t: "Connecting to Bank Servers...", s: "Establishing secure 256-bit SSL encryption tunnel." },
-                        { t: isUPI ? "Requesting your UPI App..." : "Verifying Card Details...", s: "Authenticating transaction details with payment provider." },
-                        { t: "Authorizing Payment...", s: "Awaiting bank approval. We are almost there..." },
-                        { t: "Payment Successful! 🎉", s: "Your Premium subscription is activating now..." }
+                        { t: "Establishing Connection...", s: "Authenticating with UPI Gateway." },
+                        { t: "Awaiting Bank PIN...", s: "Complete the transaction in your UPI app." },
+                        { t: "Verification Successful! 🎉", s: "Payment received. Activating account..." }
                     ];
 
                     let step = 0;
                     const interval = setInterval(() => {
                         step++;
                         if (step < steps.length) {
-                            uiTit.innerText = steps[step].t;
-                            uiSub.innerText = steps[step].s;
-                            if (step === steps.length - 1) {
-                                uiTit.style.color = "#16a34a"; // Green color for success
-                            }
+                            if (uiTit) uiTit.innerText = steps[step].t;
+                            if (uiSub) uiSub.innerText = steps[step].s;
                         } else {
                             clearInterval(interval);
-                            document.getElementById('paymentFormSubmit').submit(); // Actually submit to backend
+                            document.getElementById('paymentFormSubmit').submit();
                         }
-                    }, 2400); // 2.4 seconds delay per step for maximum realism
+                    }, 3500);
                 }
             </script>
 

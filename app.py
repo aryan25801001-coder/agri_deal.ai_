@@ -98,6 +98,17 @@ CATEGORIES = ['Vegetables', 'Fruits', 'Grains', 'Spices', 'Dairy', 'Pulses', 'Li
 def ensure_db():
     try:
         db.create_all()
+        # Ensure demo user exists
+        if not User.query.filter_by(username='demo').first():
+            demo = User(
+                username='demo',
+                email='demo@agrimarket.com',
+                password=generate_password_hash('demo123'),
+                user_type='farmer',
+                membership='premium'
+            )
+            db.session.add(demo)
+            db.session.commit()
     except Exception as e:
         app.logger.error(f"DB Init Error: {e}")
 
@@ -117,20 +128,36 @@ def inject_user_status():
             app.logger.error(f"Context processor DB error: {e}")
             pass
             
-    # Fallback to prevent template crashes if DB fails
+    # Fallback/Auto-Recovery to prevent template crashes if DB fails
     if is_auth and current_user is None:
-        class MockUser:
-            def __init__(self):
-                self.id = session.get('user_id', 1)
-                self.username = session.get('username', 'Demo User')
-                self.email = 'demo@agrimarket.com'
-                self.user_type = session.get('user_type', 'farmer')
-                self.phone = 'Not Provided'
-                self.address = 'Not Provided'
-                self.membership = 'premium'
-                self.is_authenticated = True
-        current_user = MockUser()
-        is_premium = True
+        try:
+            # Attempt to RE-CREATE the user if they were lost during a server restart
+            recovered_user = User(
+                id=session.get('user_id'),
+                username=session.get('username', 'User'),
+                email=session.get('email', f"{session.get('username')}@temp.com"),
+                password=generate_password_hash('temporary'), # Password doesn't matter for session recovery
+                user_type=session.get('user_type', 'farmer'),
+                membership='basic'
+            )
+            db.session.add(recovered_user)
+            db.session.commit()
+            current_user = recovered_user
+        except:
+            db.session.rollback()
+            # If re-creation fails, use MockUser as last resort
+            class MockUser:
+                def __init__(self):
+                    self.id = session.get('user_id', 1)
+                    self.username = session.get('username', 'Demo User')
+                    self.email = 'demo@agrimarket.com'
+                    self.user_type = session.get('user_type', 'farmer')
+                    self.phone = 'Not Provided'
+                    self.address = 'Not Provided'
+                    self.membership = 'premium'
+                    self.is_authenticated = True
+            current_user = MockUser()
+        is_premium = (current_user.membership == 'premium')
     elif current_user:
         current_user.is_authenticated = True
         
@@ -1033,9 +1060,25 @@ def upgrade_premium():
     
     try:
         user = User.query.get(session['user_id'])
-    except Exception as e:
+    except Exception:
         db.create_all()
         user = User.query.get(session['user_id'])
+
+    # Crucial Fix: If user is missing from DB (Vercel reset), re-create them instead of erroring
+    if not user and 'user_id' in session:
+        try:
+            user = User(
+                id=session.get('user_id'),
+                username=session.get('username', 'User'),
+                email=session.get('email', f"{session.get('username')}@temp.com"),
+                password=generate_password_hash('temporary'),
+                user_type=session.get('user_type', 'farmer'),
+                membership='basic'
+            )
+            db.session.add(user)
+            db.session.commit()
+        except:
+            db.session.rollback()
 
     if request.method == 'POST':
         # Simulated payment processing happens on frontend. 
