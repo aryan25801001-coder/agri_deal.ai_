@@ -145,52 +145,156 @@
                     </div>
                 </div>
 
-                <form id="blockchainPaymentForm" action="{{ url_for('upgrade_premium') }}" method="POST">
-                    <button type="button" class="upgrade-btn" onclick="startBlockchainPayment()">
-                        Pay with Web3 Wallet <i class="fab fa-ethereum ms-2"></i>
+                <!-- Custom Payment Methods -->
+                <div class="payment-box text-start mt-4 mb-3"
+                    style="border: 1px solid #e2e8f0; border-radius: 20px; padding: 25px; background: #f8fafc;">
+                    <h5 style="font-weight: 800; color: #1e293b; margin-bottom: 20px;">Choose Payment Method</h5>
+
+                    <!-- Payment Modes Accordion (Custom UI) -->
+                    <div class="payment-methods">
+
+                        <!-- UPI Section -->
+                        <div class="payment-option mb-3">
+                            <input type="radio" class="btn-check" name="pay_mode" id="mode_upi" autocomplete="off"
+                                checked onchange="togglePaymentForm('upi')">
+                            <label class="btn btn-outline-success w-100 text-start fw-bold" for="mode_upi"
+                                style="padding: 15px; border-radius: 12px;">
+                                <i class="fas fa-qrcode me-2"></i> UPI (GPay, PhonePe, BHIM)
+                            </label>
+
+                            <div id="upi_form" class="mt-3" style="display: block; padding: 10px 15px;">
+                                <div class="d-flex gap-2 mb-3">
+                                    <span class="badge bg-light text-dark border"><img
+                                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Google_Pay_Logo.svg/1024px-Google_Pay_Logo.svg.png"
+                                            style="height: 15px; margin-right: 5px;" alt="GPay">GPay</span>
+                                    <span class="badge bg-light text-dark border"><img
+                                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/PhonePe_Logo.svg/1024px-PhonePe_Logo.svg.png"
+                                            style="height: 15px; margin-right: 5px;" alt="PhonePe">PhonePe</span>
+                                    <span class="badge bg-light text-dark border"><img
+                                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/1200px-UPI-Logo-vector.svg.png"
+                                            style="height: 15px; margin-right: 5px;" alt="BHIM">BHIM</span>
+                                </div>
+                                <label class="form-label" style="font-size: 0.9rem; font-weight: 600;">Enter your UPI
+                                    ID</label>
+                                <input type="text" class="form-control" id="upi_id" placeholder="mobile-number@upi"
+                                    style="border-radius: 8px;">
+                                <small class="text-muted" style="font-size: 0.75rem;">A payment request will be sent to
+                                    your UPI app.</small>
+                            </div>
+                        </div>
+
+                        <!-- Credit/Debit Card Section -->
+                        <div class="payment-option">
+                            <input type="radio" class="btn-check" name="pay_mode" id="mode_card" autocomplete="off"
+                                onchange="togglePaymentForm('card')">
+                            <label class="btn btn-outline-success w-100 text-start fw-bold" for="mode_card"
+                                style="padding: 15px; border-radius: 12px;">
+                                <i class="far fa-credit-card me-2"></i> Credit / Debit Card
+                            </label>
+
+                            <div id="card_form" class="mt-3" style="display: none; padding: 10px 15px;">
+                                <div class="mb-3">
+                                    <label class="form-label" style="font-size: 0.9rem; font-weight: 600;">Card
+                                        Number</label>
+                                    <input type="text" class="form-control" placeholder="0000 0000 0000 0000"
+                                        maxlength="19" style="border-radius: 8px;">
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <label class="form-label" style="font-size: 0.9rem; font-weight: 600;">Valid
+                                            Thru</label>
+                                        <input type="text" class="form-control" placeholder="MM/YY" maxlength="5"
+                                            style="border-radius: 8px;">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label"
+                                            style="font-size: 0.9rem; font-weight: 600;">CVV</label>
+                                        <input type="password" class="form-control" placeholder="***" maxlength="3"
+                                            style="border-radius: 8px;">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" style="font-size: 0.9rem; font-weight: 600;">Cardholder
+                                        Name</label>
+                                    <input type="text" class="form-control" placeholder="Name on Card"
+                                        style="border-radius: 8px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="paymentFormSubmit" action="{{ url_for('upgrade_premium') }}" method="POST">
+                    <button type="button" class="upgrade-btn" onclick="processPayment()">
+                        Pay Securely ₹999 <i class="fas fa-lock ms-2"></i>
                     </button>
                 </form>
 
-                <p style="margin-top: 20px; color: #94a3b8; font-size: 0.85rem;">Secured by Ethereum Smart Contracts.
-                    Cancel anytime.</p>
+                <p style="margin-top: 20px; color: #94a3b8; font-size: 0.85rem;">Secured by Razorpay. Your payment
+                    details are fully encrypted.</p>
             </div>
 
-            <!-- Blockchain Loader Modal -->
-            <div id="cryptoLoader"
-                style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; color: #10b981;">
-                <i class="fab fa-ethereum fa-spin" style="font-size: 4rem; margin-bottom: 20px;"></i>
-                <h3 id="loaderStatus" style="font-weight: 800; color: white;">Connecting to Wallet...</h3>
-                <p id="loaderHash" style="color: #64748b; font-family: monospace; font-size: 0.9rem;"></p>
+            <!-- Loading Overlay for Realistic Payment Processing -->
+            <div id="paymentLoader"
+                style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.98); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
                 <div class="spinner-border text-success" role="status"
-                    style="width: 3rem; height: 3rem; margin-top: 15px;"></div>
+                    style="width: 4rem; height: 4rem; margin-bottom: 25px;"></div>
+                <h3 id="paymentStatusTit" style="font-weight: 800; color: #1e293b;">Initializing Secure Gateway...</h3>
+                <p id="paymentStatusSub" style="color: #64748b; font-size: 1.1rem; max-width: 400px; line-height: 1.6;">
+                    Please do not close or refresh this page.</p>
+                <div style="margin-top: 30px; display: flex; gap: 20px;">
+                    <i class="fas fa-shield-alt text-success" style="font-size: 1.8rem;"></i>
+                    <i class="fas fa-lock text-success" style="font-size: 1.8rem;"></i>
+                </div>
             </div>
 
             <script>
-                function startBlockchainPayment() {
-                    document.getElementById('cryptoLoader').style.display = 'flex';
+                // Toggle forms UI
+                function togglePaymentForm(method) {
+                    if (method === 'upi') {
+                        document.getElementById('upi_form').style.display = 'block';
+                        document.getElementById('card_form').style.display = 'none';
+                    } else {
+                        document.getElementById('upi_form').style.display = 'none';
+                        document.getElementById('card_form').style.display = 'block';
+                    }
+                }
 
-                    const statuses = [
-                        "Connecting to MetaMask...",
-                        "Requesting Wallet Signature...",
-                        "Executing Smart Contract...",
-                        "Confirming Transaction on Block Explorer...",
-                        "Transaction Mined Successfully! Redirecting..."
+                // Simulate Realistic Checking Process
+                function processPayment() {
+                    const activeMethod = document.getElementById('mode_upi').checked ? 'UPI' : 'Card';
+
+                    if (activeMethod === 'UPI' && document.getElementById('upi_id').value.trim() === '') {
+                        alert("Please enter a valid UPI ID (e.g., 9876543210@ybl)");
+                        return;
+                    }
+
+                    document.getElementById('paymentLoader').style.display = 'flex';
+
+                    const uiTit = document.getElementById('paymentStatusTit');
+                    const uiSub = document.getElementById('paymentStatusSub');
+
+                    const steps = [
+                        { t: "Connecting to Bank Servers...", s: "Establishing secure 256-bit SSL connection." },
+                        { t: activeMethod === "UPI" ? "Requesting your UPI App..." : "Verifying Card Details...", s: "Authenticating transaction details with payment provider." },
+                        { t: "Authorizing Payment...", s: "Awaiting bank approval. Almost there..." },
+                        { t: "Payment Successful! 🎉", s: "Your Premium subscription is activating now..." }
                     ];
 
                     let step = 0;
                     const interval = setInterval(() => {
                         step++;
-                        if (step < statuses.length) {
-                            document.getElementById('loaderStatus').innerText = statuses[step];
-                            if (step === 2) {
-                                const dummyHash = "0x" + Array.from({ length: 40 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
-                                document.getElementById('loaderHash').innerText = "Tx Hash: " + dummyHash;
+                        if (step < steps.length) {
+                            uiTit.innerText = steps[step].t;
+                            uiSub.innerText = steps[step].s;
+                            if (step === steps.length - 1) {
+                                uiTit.style.color = "#16a34a"; // Green color for success
                             }
                         } else {
                             clearInterval(interval);
-                            document.getElementById('blockchainPaymentForm').submit();
+                            document.getElementById('paymentFormSubmit').submit(); // Actually submit to backend
                         }
-                    }, 1200);
+                    }, 2200); // 2.2 seconds delay per step for maximum realism
                 }
             </script>
 

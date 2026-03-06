@@ -1038,13 +1038,13 @@ def upgrade_premium():
         user = User.query.get(session['user_id'])
 
     if request.method == 'POST':
-        # Simulated blockchain processing happens on frontend. 
+        # Simulated payment processing happens on frontend. 
         # Here we just mark them premium in DB (if they exist).
         if user:
             try:
                 user.membership = 'premium'
                 db.session.commit()
-                flash('Blockchain Transaction Confirmed! Welcome to Web3 Premium! All limits have been removed.')
+                flash('Payment Successful! Welcome to Premium! All limits have been removed.')
             except Exception as e:
                 db.session.rollback()
                 flash('Database Error during premium activation. Please try again.')
