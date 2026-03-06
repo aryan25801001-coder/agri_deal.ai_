@@ -37,6 +37,11 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
+import traceback
+@app.errorhandler(Exception)
+def handle_exception(e):
+    return f"Error occurred: {str(e)} <br><pre>{traceback.format_exc()}</pre>", 500
+
 # Database Models
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -99,16 +104,43 @@ def ensure_db():
 # Context processor to make variables available in templates
 @app.context_processor
 def inject_user_status():
-    is_authenticated = 'user_id' in session
+    is_auth = 'user_id' in session
     is_premium = False
-    if is_authenticated:
+    current_user = None
+    
+    if is_auth:
         try:
-            user = User.query.get(session['user_id'])
-            if user and user.membership == 'premium':
+            current_user = User.query.get(session['user_id'])
+            if current_user and current_user.membership == 'premium':
                 is_premium = True
-        except:
+        except Exception as e:
+            app.logger.error(f"Context processor DB error: {e}")
             pass
-    return dict(is_authenticated=lambda: is_authenticated, is_premium=is_premium)
+            
+    # Fallback to prevent template crashes if DB fails
+    if is_auth and current_user is None:
+        class MockUser:
+            def __init__(self):
+                self.id = session.get('user_id', 1)
+                self.username = session.get('username', 'Demo User')
+                self.email = 'demo@agrimarket.com'
+                self.user_type = session.get('user_type', 'farmer')
+                self.phone = 'Not Provided'
+                self.address = 'Not Provided'
+                self.membership = 'premium'
+                self.is_authenticated = True
+        current_user = MockUser()
+        is_premium = True
+    elif current_user:
+        current_user.is_authenticated = True
+        
+    # Provide a dummy unauthenticated user for places accessing current_user.is_authenticated
+    if not current_user:
+        class AnonUser:
+            is_authenticated = False
+        current_user = AnonUser()
+
+    return dict(is_authenticated=lambda: is_auth, is_premium=is_premium, current_user=current_user)
 
 # Routes
 @app.route('/')
