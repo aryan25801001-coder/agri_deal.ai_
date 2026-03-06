@@ -218,13 +218,27 @@ def register():
         phone = request.form.get('phone')
         address = request.form.get('address')
         
-        if User.query.filter_by(username=username).first():
+        # Attempt query with automatic retry/table creation
+        try:
+            existing_user = User.query.filter_by(username=username).first()
+        except:
+            db.create_all()
+            try:
+                existing_user = User.query.filter_by(username=username).first()
+            except:
+                flash('Database initialization issue. Please try again.')
+                return redirect(url_for('register'))
+
+        if existing_user:
             flash('Username already exists')
             return redirect(url_for('register'))
         
-        if User.query.filter_by(email=email).first():
-            flash('Email already exists')
-            return redirect(url_for('register'))
+        try:
+            if User.query.filter_by(email=email).first():
+                flash('Email already exists')
+                return redirect(url_for('register'))
+        except:
+             db.create_all()
         
         hashed_password = generate_password_hash(password)
         new_user = User(
@@ -236,8 +250,13 @@ def register():
             address=address,
             membership='basic'
         )
-        db.session.add(new_user)
-        db.session.commit()
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+        except:
+            db.create_all()
+            db.session.add(new_user)
+            db.session.commit()
         
         flash('Registration successful! Please login.')
         return redirect(url_for('login'))
@@ -251,10 +270,16 @@ def login():
         username = request.form['username']
         password = request.form['password']
         
+        user = None
         try:
             user = User.query.filter_by(username=username).first()
-        except:
-            user = None
+        except Exception as e:
+            print(f"Login DB match failed, attempting create_all: {e}")
+            db.create_all()
+            try:
+                user = User.query.filter_by(username=username).first()
+            except:
+                pass
             
         if user and check_password_hash(user.password, password):
             session['user_id'] = user.id
