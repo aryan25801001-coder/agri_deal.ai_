@@ -8,11 +8,30 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'sih-submission-secret'
 
 # Vercel fix for SQLite
-if os.environ.get('VERCEL'):
+if os.environ.get('VERCEL') == '1' or os.environ.get('VERCEL'):
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/agri_market.db'
 else:
     basedir = os.path.abspath(os.path.dirname(__file__))
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'agri_market.db')
+
+@app.route('/init_db')
+def init_db():
+    try:
+        db.create_all()
+        # Add a demo user if it doesn't exist
+        if not User.query.filter_by(username='demo').first():
+            demo_user = User(
+                username='demo',
+                email='demo@agrimarket.com',
+                password=generate_password_hash('demo123'),
+                user_type='farmer',
+                membership='premium'
+            )
+            db.session.add(demo_user)
+            db.session.commit()
+        return "Database initialized with Demo User (demo/demo123) successfully! Go back to <a href='/'>Home</a>"
+    except Exception as e:
+        return f"Error initializing database: {e}"
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -70,9 +89,14 @@ class Review(db.Model):
 # Categories
 CATEGORIES = ['Vegetables', 'Fruits', 'Grains', 'Spices', 'Dairy', 'Livestock', 'Other']
 
-# Initialize Database
-with app.app_context():
-    db.create_all()
+# Initialize Database on first request
+@app.before_request
+def initialize_database():
+    # Attempt to create tables if they don't exist
+    try:
+        db.create_all()
+    except Exception as e:
+        app.logger.error(f"Error creating database tables: {e}")
 
 # Context processor to make variables available in templates
 @app.context_processor
