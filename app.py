@@ -70,6 +70,25 @@ class Review(db.Model):
 # Categories
 CATEGORIES = ['Vegetables', 'Fruits', 'Grains', 'Spices', 'Dairy', 'Livestock', 'Other']
 
+# Initialize Database
+with app.app_context():
+    db.create_all()
+
+# Context processor to make variables available in templates
+@app.context_processor
+def inject_user_status():
+    is_authenticated = 'user_id' in session
+    is_premium = False
+    if is_authenticated:
+        try:
+            user = User.query.get(session['user_id'])
+            if user and user.membership == 'premium':
+                is_premium = True
+        except:
+            pass
+    # is_authenticated as a function to match base.html check: if is_authenticated()
+    return dict(is_authenticated=lambda: is_authenticated, is_premium=is_premium)
+
 # Routes
 @app.route('/')
 def index():
