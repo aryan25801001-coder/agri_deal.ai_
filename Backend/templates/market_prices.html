@@ -1,0 +1,511 @@
+{% extends "base.html" %}
+{% block title %}Market Prices - AI AgriMarket{% endblock %}
+{% block extra_css %}
+<style>
+    .prices-hero {
+        background: linear-gradient(135deg, #1e293b 0%, #0f4c2a 100%);
+        color: white;
+        padding: 54px 0 76px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .prices-hero::before {
+        content: '';
+        position: absolute;
+        top: -80px;
+        right: -80px;
+        width: 320px;
+        height: 320px;
+        background: rgba(22, 163, 74, 0.08);
+        border-radius: 50%;
+    }
+
+    .live-ticker {
+        background: rgba(22, 163, 74, 0.12);
+        border: 1px solid rgba(22, 163, 74, 0.25);
+        border-radius: 12px;
+        padding: 12px 20px;
+        overflow: hidden;
+        white-space: nowrap;
+        position: relative;
+    }
+
+    .ticker-inner {
+        display: inline-block;
+        animation: ticker 40s linear infinite;
+    }
+
+    .ticker-item {
+        display: inline-block;
+        margin-right: 40px;
+        font-size: 0.88rem;
+        font-weight: 600;
+    }
+
+    .ticker-up {
+        color: #4ade80;
+    }
+
+    .ticker-down {
+        color: #f87171;
+    }
+
+    @keyframes ticker {
+        from {
+            transform: translateX(100%)
+        }
+
+        to {
+            transform: translateX(-100%)
+        }
+    }
+
+    .price-strip {
+        background: white;
+        border-radius: 20px;
+        padding: 30px 32px;
+        box-shadow: 0 12px 48px rgba(22, 163, 74, 0.12);
+        margin-top: -44px;
+        position: relative;
+        z-index: 10;
+        border: 1px solid #e2e8f0;
+    }
+
+    .price-card {
+        background: white;
+        border-radius: 18px;
+        padding: 24px 20px;
+        border: 1px solid #e2e8f0;
+        transition: all 0.25s;
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    .price-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+    }
+
+    .price-card.up::before {
+        background: linear-gradient(90deg, #16a34a, #4ade80);
+    }
+
+    .price-card.down::before {
+        background: linear-gradient(90deg, #dc2626, #f87171);
+    }
+
+    .price-card.flat::before {
+        background: linear-gradient(90deg, #94a3b8, #cbd5e1);
+    }
+
+    .price-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 14px 44px rgba(22, 163, 74, 0.14);
+    }
+
+    .price-emoji {
+        font-size: 2.4rem;
+        margin-bottom: 10px;
+    }
+
+    .price-name {
+        font-weight: 700;
+        color: #1e293b;
+        font-size: 1rem;
+        margin-bottom: 4px;
+    }
+
+    .price-unit {
+        font-size: 0.72rem;
+        color: #94a3b8;
+        margin-bottom: 12px;
+    }
+
+    .price-amount {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #1e293b;
+        letter-spacing: -1px;
+        line-height: 1;
+        margin-bottom: 8px;
+    }
+
+    .price-change {
+        display: inline-block;
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-size: 0.82rem;
+        font-weight: 700;
+    }
+
+    .change-up {
+        background: #dcfce7;
+        color: #16a34a;
+    }
+
+    .change-down {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .change-flat {
+        background: #f1f5f9;
+        color: #64748b;
+    }
+
+    .price-mini-chart {
+        height: 40px;
+        display: flex;
+        align-items: flex-end;
+        gap: 3px;
+        justify-content: center;
+        margin-top: 12px;
+    }
+
+    .bar {
+        border-radius: 3px 3px 0 0;
+        width: 10px;
+        opacity: 0.6;
+    }
+
+    /* Big Table */
+    .prices-table {
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+    }
+
+    .prices-table thead th {
+        background: #16a34a;
+        color: white;
+        font-weight: 600;
+        padding: 14px 18px;
+        font-size: 0.85rem;
+        border: none;
+    }
+
+    .prices-table tbody td {
+        padding: 14px 18px;
+        vertical-align: middle;
+        border-color: #f1f5f9;
+        font-size: 0.9rem;
+    }
+
+    .prices-table tbody tr:hover td {
+        background: #f0fdf4;
+    }
+
+    .prices-table .commodity-name {
+        font-weight: 700;
+        color: #1e293b;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Insight Box */
+    .insight-card {
+        border-radius: 16px;
+        padding: 24px;
+        border: none;
+        height: 100%;
+        transition: all 0.2s;
+    }
+
+    .insight-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+    }
+
+    .search-wrapper {
+        background: white;
+        border-radius: 16px;
+        padding: 12px 18px;
+        box-shadow: 0 12px 32px rgba(22, 163, 74, 0.15);
+        border: 2px solid #e2e8f0;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        margin-top: -24px;
+        position: relative;
+        z-index: 20;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .search-wrapper.focused {
+        border-color: #16a34a;
+        box-shadow: 0 12px 36px rgba(22, 163, 74, 0.25);
+    }
+
+    .search-input {
+        border: none;
+        outline: none;
+        font-size: 1.1rem;
+        width: 100%;
+        color: #1e293b;
+        font-weight: 600;
+        padding-left: 12px;
+    }
+
+    .search-input::placeholder {
+        color: #94a3b8;
+        font-weight: 500;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="prices-hero">
+    <div class="container">
+        <div class="text-center mb-4">
+            <span
+                style="background:rgba(22,163,74,0.2); border:1px solid rgba(22,163,74,0.35); color:#86efac; padding:5px 16px; border-radius:20px; font-size:0.83rem; font-weight:600;">📊
+                Live Mandi Prices</span>
+            <h1 style="font-weight:800; font-size:2.1rem; margin:14px 0 8px; letter-spacing:-0.5px;">Agricultural Market
+                Prices</h1>
+            <p style="opacity:0.7; max-width:480px; margin:auto;">Real-time commodity rates from major mandis across
+                India</p>
+        </div>
+        <!-- Live Ticker -->
+        <div class="live-ticker mt-4">
+            <span
+                style="color:rgba(255,255,255,0.4); font-size:0.78rem; margin-right:12px; font-weight:600;">LIVE</span>
+            <div class="ticker-inner">
+                {% for item in prices %}
+                <span
+                    class="ticker-item {% if item.change > 0 %}ticker-up{% elif item.change < 0 %}ticker-down{% endif %}">
+                    {{ item.commodity }} ₹{{ item.price }}/{{ item.unit }}
+                    {% if item.change > 0 %}▲ +{{ item.change }}%{% elif item.change < 0 %}▼ {{ item.change }}%{% else
+                        %}— 0%{% endif %} </span>
+                        {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <!-- Search Bar -->
+    <div class="search-wrapper mb-5" id="search-container">
+        <i class="fas fa-search" style="color:#16a34a; font-size:1.3rem;"></i>
+        <input type="text" id="marketSearch" class="search-input" onkeyup="filterMarket()"
+            placeholder="Search any vegetable, fruit, grain...">
+        <div
+            style="background:#f0fdf4; padding:6px 12px; border-radius:8px; font-size:0.75rem; color:#166534; font-weight:700; white-space:nowrap;">
+            60+ Items</div>
+    </div>
+
+    <!-- Price Cards Strip -->
+    <div class="price-strip mb-5" id="price-card-strip">
+        <div class="row g-3" id="cards-container">
+            {% for item in prices %}
+            <div class="col-6 col-md-4 col-lg-2 price-card-col">
+                <div
+                    class="price-card {% if item.change > 0 %}up{% elif item.change < 0 %}down{% else %}flat{% endif %}">
+                    <div class="price-emoji">{{ item.emoji }}</div>
+                    <div class="price-name">{{ item.commodity }}</div>
+                    <div class="price-unit">per {{ item.unit }}</div>
+                    <div class="price-amount">₹{{ item.price }}</div>
+                    <span
+                        class="price-change {% if item.change > 0 %}change-up{% elif item.change < 0 %}change-down{% else %}change-flat{% endif %}">
+                        {% if item.change > 0 %}↑ +{{ item.change }}%{% elif item.change < 0 %}↓ {{ item.change }}%{%
+                            else %}→ 0.0%{% endif %} </span>
+                            <!-- Mini sparkline bars -->
+                            <div class="price-mini-chart">
+                                {% for h in [60,75,55,80,70,85,65,90] %}
+                                <div class="bar"
+                                    style="height:{{ h * 0.4 }}px; background:{% if item.change >= 0 %}#16a34a{% else %}#dc2626{% endif %};">
+                                </div>
+                                {% endfor %}
+                            </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div id="no-cards-msg" style="display:none; text-align:center; padding:20px; color:#64748b; font-weight:600;">No
+            items found matching your search.</div>
+    </div>
+
+    <!-- Detailed Table -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-8">
+            <h4 style="font-weight:800; margin-bottom:4px;">📋 Detailed <span style="color:#16a34a;">Price List</span>
+            </h4>
+            <div
+                style="width:40px; height:4px; background:linear-gradient(90deg,#16a34a,#f59e0b); border-radius:2px; margin-bottom:20px;">
+            </div>
+            <div class="prices-table">
+                <table class="table mb-0" id="prices-table-data">
+                    <thead>
+                        <tr>
+                            <th>Commodity</th>
+                            <th>Price (₹)</th>
+                            <th>Unit</th>
+                            <th>Change</th>
+                            <th>Trend</th>
+                            <th>Signal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in prices %}
+                        <tr class="table-row-item">
+                            <td>
+                                <div class="commodity-name">
+                                    <span style="font-size:1.4rem;">{{ item.emoji }}</span>
+                                    <span class="row-c-name">{{ item.commodity }}</span>
+                                </div>
+                            </td>
+                            <td><strong style="color:#1e293b; font-size:1.05rem;">₹{{ item.price }}</strong></td>
+                            <td><span style="color:#64748b;">{{ item.unit }}</span></td>
+                            <td>
+                                <span
+                                    style="padding:4px 12px; border-radius:20px; font-weight:700; font-size:0.82rem;
+                                    background:{% if item.change > 0 %}#dcfce7; color:#16a34a{% elif item.change < 0 %}#fee2e2; color:#dc2626{% else %}#f1f5f9; color:#64748b{% endif %};">
+                                    {% if item.change > 0 %}+{% endif %}{{ item.change }}%
+                                </span>
+                            </td>
+                            <td>
+                                {% if item.change > 0 %}<i class="fas fa-arrow-trend-up text-success fa-lg"></i>
+                                {% elif item.change < 0 %}<i class="fas fa-arrow-trend-down text-danger fa-lg"></i>
+                                    {% else %}<i class="fas fa-minus text-muted"></i>{% endif %}
+                            </td>
+                            <td>
+                                {% if item.change > 3 %}<span
+                                    style="background:#dcfce7; color:#15803d; padding:3px 10px; border-radius:8px; font-size:0.76rem; font-weight:700;">BUY
+                                    / HOLD</span>
+                                {% elif item.change < -2 %}<span
+                                    style="background:#fee2e2; color:#dc2626; padding:3px 10px; border-radius:8px; font-size:0.76rem; font-weight:700;">
+                                    SELL NOW</span>
+                                    {% else %}<span
+                                        style="background:#f1f5f9; color:#64748b; padding:3px 10px; border-radius:8px; font-size:0.76rem; font-weight:700;">WATCH</span>{%
+                                    endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div id="no-table-msg"
+                style="display:none; text-align:center; padding:20px; background:#f8fafc; border-radius:12px; border:1px solid #e2e8f0; color:#64748b; font-weight:600; margin-top:20px;">
+                No detailed prices found.</div>
+            <p style="color:#94a3b8; font-size:0.76rem; margin-top:8px;"><i class="fas fa-info-circle me-1"></i>Prices
+                updated daily from major mandis across India.</p>
+        </div>
+
+        <div class="col-lg-4">
+            <h4 style="font-weight:800; margin-bottom:4px;">💡 Market <span style="color:#16a34a;">Insights</span></h4>
+            <div
+                style="width:40px; height:4px; background:linear-gradient(90deg,#16a34a,#f59e0b); border-radius:2px; margin-bottom:20px;">
+            </div>
+
+            <div class="insight-card bg-success bg-opacity-10 border border-success border-opacity-25 mb-3">
+                <div style="font-weight:700; color:#15803d; margin-bottom:10px;"><i
+                        class="fas fa-arrow-up me-2"></i>Rising Prices</div>
+                <ul style="color:#166534; font-size:0.88rem; padding-left:18px; margin:0;">
+                    <li>🧅 Onion — rising fast, good to sell</li>
+                    <li>🍅 Tomato — seasonal demand spike</li>
+                    <li>🌶️ Spices — festive season demand</li>
+                </ul>
+            </div>
+
+            <div class="insight-card bg-danger bg-opacity-10 border border-danger border-opacity-25 mb-3">
+                <div style="font-weight:700; color:#dc2626; margin-bottom:10px;"><i
+                        class="fas fa-arrow-down me-2"></i>Falling Prices</div>
+                <ul style="color:#991b1b; font-size:0.88rem; padding-left:18px; margin:0;">
+                    <li>🥔 Potato — slight dip, sell now</li>
+                    <li>🍚 Rice — oversupply in market</li>
+                </ul>
+            </div>
+
+            <div class="insight-card bg-warning bg-opacity-10 border border-warning border-opacity-25 mb-3">
+                <div style="font-weight:700; color:#d97706; margin-bottom:10px;"><i
+                        class="fas fa-balance-scale me-2"></i>Stable Prices</div>
+                <ul style="color:#92400e; font-size:0.88rem; padding-left:18px; margin:0;">
+                    <li>🌾 Wheat — government MSP stable</li>
+                    <li>🥛 Milk — demand-supply balanced</li>
+                </ul>
+            </div>
+
+            <div
+                style="background:linear-gradient(135deg,#1e293b,#14532d); border-radius:16px; padding:20px; color:white;">
+                <div style="font-weight:700; margin-bottom:8px;">🤖 AI Recommendation</div>
+                <p style="font-size:0.85rem; color:rgba(255,255,255,0.7); margin:0;">Best selling window: <strong
+                        style="color:#4ade80;">Next 2-3 weeks</strong> for vegetables. Hold grains for Rabi season price
+                    rise. Diversify crops to reduce risk.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    const searchInput = document.getElementById('marketSearch');
+    const searchContainer = document.getElementById('search-container');
+
+    searchInput.addEventListener('focus', () => searchContainer.classList.add('focused'));
+    searchInput.addEventListener('blur', () => searchContainer.classList.remove('focused'));
+
+    const DEFAULT_SHOW = 6; // Show top 6 crops by default
+
+    function initMarket() {
+        const cards = document.querySelectorAll('.price-card-col');
+        const rows = document.querySelectorAll('.table-row-item');
+
+        cards.forEach((card, i) => card.style.display = (i < DEFAULT_SHOW) ? 'block' : 'none');
+        rows.forEach((row, i) => row.style.display = (i < DEFAULT_SHOW) ? '' : 'none');
+
+        document.getElementById('no-cards-msg').style.display = 'none';
+        document.getElementById('no-table-msg').style.display = 'none';
+        document.getElementById('prices-table-data').style.display = 'table';
+    }
+
+    function filterMarket() {
+        const query = searchInput.value.toLowerCase().trim();
+
+        if (query === '') {
+            initMarket();
+            return;
+        }
+
+        // Filter price cards
+        let foundAnyCard = false;
+        const cards = document.querySelectorAll('.price-card-col');
+        cards.forEach(card => {
+            const name = card.querySelector('.price-name').textContent.toLowerCase();
+            if (name.includes(query)) {
+                card.style.display = 'block';
+                foundAnyCard = true;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        document.getElementById('no-cards-msg').style.display = foundAnyCard ? 'none' : 'block';
+
+        // Filter table rows
+        let foundAnyRow = false;
+        const rows = document.querySelectorAll('.table-row-item');
+        rows.forEach(row => {
+            const name = row.querySelector('.row-c-name').textContent.toLowerCase();
+            if (name.includes(query)) {
+                row.style.display = '';
+                foundAnyRow = true;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        document.getElementById('prices-table-data').style.display = foundAnyRow ? 'table' : 'none';
+        document.getElementById('no-table-msg').style.display = foundAnyRow ? 'none' : 'block';
+    }
+
+    // Initialize on load to hide extra 54+ crops
+    document.addEventListener("DOMContentLoaded", initMarket);
+</script>
+{% endblock %}
+{% endblock %}

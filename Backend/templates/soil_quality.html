@@ -1,0 +1,458 @@
+{% extends "base.html" %}
+{% block title %}Soil Nutrient Analyzer - AI AgriMarket{% endblock %}
+{% block extra_css %}
+<style>
+  .soil-hero {
+    background: linear-gradient(135deg, #292524 0%, #44403c 50%, #78350f 100%);
+    color: white;
+    padding: 54px 0 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .soil-hero::before {
+    content: '';
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 320px;
+    height: 320px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 50%;
+  }
+
+  .soil-hero h1 {
+    font-weight: 800;
+    font-size: 2.1rem;
+    letter-spacing: -0.5px;
+  }
+
+  .soil-form-card {
+    background: white;
+    border-radius: 22px;
+    padding: 32px;
+    box-shadow: 0 20px 60px rgba(120, 53, 15, 0.15);
+    margin-top: -44px;
+    position: relative;
+    z-index: 10;
+    border: 1px solid #fde68a;
+  }
+
+  .soil-input-row {
+    margin-bottom: 18px;
+  }
+
+  .soil-input-row label {
+    font-weight: 700;
+    color: #44403c;
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .soil-input-row input,
+  .soil-input-row select {
+    width: 100%;
+    border: 2px solid #e7e5e4;
+    border-radius: 12px;
+    padding: 11px 14px;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    outline: none;
+  }
+
+  .soil-input-row input:focus,
+  .soil-input-row select:focus {
+    border-color: #d97706;
+    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.12);
+  }
+
+  .npk-label {
+    font-size: 0.72rem;
+    color: #a8a29e;
+    margin-top: 4px;
+  }
+
+  .analyze-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #d97706, #92400e);
+    border: none;
+    border-radius: 12px;
+    padding: 14px;
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(217, 119, 6, 0.35);
+  }
+
+  .analyze-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(217, 119, 6, 0.45);
+  }
+
+  /* Score Gauge */
+  .score-gauge {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    margin: 0 auto 20px;
+  }
+
+  .score-gauge svg {
+    transform: rotate(-90deg);
+  }
+
+  .score-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .score-num {
+    font-size: 2.4rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .score-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 600;
+  }
+
+  /* NPK Bars */
+  .npk-row {
+    margin-bottom: 20px;
+  }
+
+  .npk-bar-wrap {
+    height: 10px;
+    background: #f1f5f9;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+
+  .npk-bar-fill {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 1s ease;
+  }
+
+  .n-bar {
+    background: linear-gradient(90deg, #16a34a, #4ade80);
+  }
+
+  .p-bar {
+    background: linear-gradient(90deg, #2563eb, #60a5fa);
+  }
+
+  .k-bar {
+    background: linear-gradient(90deg, #d97706, #fbbf24);
+  }
+
+  /* Status Chips */
+  .status-chip {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .chip-optimal {
+    background: #dcfce7;
+    color: #16a34a;
+  }
+
+  .chip-low {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+
+  .chip-high {
+    background: #fef3c7;
+    color: #d97706;
+  }
+
+  /* Issue / Rec Cards */
+  .issue-row {
+    background: #fff7ed;
+    border-left: 4px solid #f59e0b;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    color: #92400e;
+    font-size: 0.87rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .rec-row {
+    background: #f0fdf4;
+    border-left: 4px solid #16a34a;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    color: #166534;
+    font-size: 0.87rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .crop-chip {
+    display: inline-block;
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    color: white;
+    border-radius: 20px;
+    padding: 6px 18px;
+    margin: 4px;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+
+  .result-section {
+    background: white;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 8px 36px rgba(0, 0, 0, 0.07);
+    border: 1px solid #e2e8f0;
+    margin-bottom: 20px;
+  }
+
+  .result-section h6 {
+    font-weight: 800;
+    color: #1e293b;
+    font-size: 1rem;
+    margin-bottom: 16px;
+  }
+
+  .ph-bar {
+    height: 12px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #ef4444 0%, #eab308 30%, #22c55e 50%, #eab308 70%, #3b82f6 100%);
+    position: relative;
+  }
+
+  .ph-pointer {
+    position: absolute;
+    top: -6px;
+    width: 2px;
+    height: 24px;
+    background: #1e293b;
+    border-radius: 1px;
+  }
+
+  .empty-state {
+    background: white;
+    border-radius: 20px;
+    border: 2px dashed #d6d3d1;
+    padding: 60px 30px;
+    text-align: center;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="soil-hero">
+  <div class="container text-center">
+    <span
+      style="background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25); padding:5px 16px; border-radius:20px; font-size:0.82rem; font-weight:600; color:#fde68a;">🧪
+      AI Soil Analysis</span>
+    <h1 class="mt-3 mb-2">Soil Nutrient Analyzer</h1>
+    <p style="opacity:0.75; max-width:480px; margin:auto;">Enter your soil test values — get instant NPK analysis, pH
+      check, fertilizer recommendations & best crop suggestions</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row g-4">
+    <!-- Form -->
+    <div class="col-lg-4">
+      <div class="soil-form-card">
+        <h5 style="font-weight:800; color:#292524; margin-bottom:22px;"><i class="fas fa-flask me-2"
+            style="color:#d97706;"></i>Enter Soil Data</h5>
+        <form method="POST">
+          <div class="soil-input-row">
+            <label>🌱 Crop Type</label>
+            <select name="crop">
+              <option>Wheat</option>
+              <option>Rice</option>
+              <option>Tomato</option>
+              <option>Potato</option>
+              <option>Maize</option>
+              <option>Sugarcane</option>
+              <option>Cotton</option>
+              <option>Mustard</option>
+              <option>General</option>
+            </select>
+          </div>
+          <div class="row g-2">
+            <div class="col-12">
+              <div class="soil-input-row">
+                <label>Nitrogen (N) — kg/ha</label>
+                <input type="number" name="nitrogen" placeholder="e.g. 40" min="0" max="200" required>
+                <div class="npk-label">Optimal: 20–60 kg/ha</div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="soil-input-row">
+                <label>Phosphorus (P) — kg/ha</label>
+                <input type="number" name="phosphorus" placeholder="e.g. 25" min="0" max="150" required>
+                <div class="npk-label">Optimal: 15–50 kg/ha</div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="soil-input-row">
+                <label>Potassium (K) — kg/ha</label>
+                <input type="number" name="potassium" placeholder="e.g. 180" min="0" max="800" required>
+                <div class="npk-label">Optimal: 100–300 kg/ha</div>
+              </div>
+            </div>
+          </div>
+          <div class="soil-input-row">
+            <label>Soil pH</label>
+            <input type="number" name="ph" placeholder="e.g. 6.5" min="3" max="10" step="0.1" required>
+            <div class="npk-label">Optimal: 5.5–7.5 | Neutral: 7.0</div>
+          </div>
+          <div class="soil-input-row">
+            <label>Soil Moisture (%)</label>
+            <input type="number" name="moisture" placeholder="e.g. 50" min="0" max="100" required>
+          </div>
+          <button type="submit" class="analyze-btn">
+            <i class="fas fa-microscope me-2"></i>Analyze My Soil
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="col-lg-8">
+      {% if result %}
+      <!-- Score -->
+      <div class="result-section text-center">
+        <div class="score-gauge">
+          <svg width="160" height="160" viewBox="0 0 160 160">
+            <circle cx="80" cy="80" r="68" fill="none" stroke="#f1f5f9" stroke-width="14" />
+            <circle cx="80" cy="80" r="68" fill="none"
+              stroke="{% if result.rating == 'Excellent' %}#16a34a{% elif result.rating == 'Good' %}#0ea5e9{% elif result.rating == 'Fair' %}#f59e0b{% else %}#dc2626{% endif %}"
+              stroke-width="14" stroke-linecap="round" stroke-dasharray="{{ result.score * 4.27 }} 427"
+              style="transition:stroke-dasharray 1.2s ease;" />
+          </svg>
+          <div class="score-text">
+            <div class="score-num"
+              style="color:{% if result.rating == 'Excellent' %}#16a34a{% elif result.rating == 'Good' %}#0ea5e9{% elif result.rating == 'Fair' %}#f59e0b{% else %}#dc2626{% endif %};">
+              {{ result.score }}</div>
+            <div class="score-label">/100</div>
+          </div>
+        </div>
+        <h3 style="font-weight:800; font-size:1.6rem; margin-bottom:4px;">{{ result.rating }} Soil</h3>
+        <p style="color:#64748b;">Analysis for <strong>{{ result.crop }}</strong></p>
+        <div class="row g-3 mt-2">
+          <div class="col-3 text-center">
+            <div style="font-size:1.4rem; font-weight:800; color:#16a34a;">{{ result.nitrogen }}</div>
+            <div style="font-size:0.72rem; color:#64748b;">N (kg/ha)</div><span
+              class="status-chip chip-{{ result.n_status|lower }}">{{ result.n_status }}</span>
+          </div>
+          <div class="col-3 text-center">
+            <div style="font-size:1.4rem; font-weight:800; color:#2563eb;">{{ result.phosphorus }}</div>
+            <div style="font-size:0.72rem; color:#64748b;">P (kg/ha)</div><span
+              class="status-chip chip-{{ result.p_status|lower }}">{{ result.p_status }}</span>
+          </div>
+          <div class="col-3 text-center">
+            <div style="font-size:1.4rem; font-weight:800; color:#d97706;">{{ result.potassium }}</div>
+            <div style="font-size:0.72rem; color:#64748b;">K (kg/ha)</div><span
+              class="status-chip chip-{{ result.k_status|lower }}">{{ result.k_status }}</span>
+          </div>
+          <div class="col-3 text-center">
+            <div style="font-size:1.4rem; font-weight:800; color:#7c3aed;">{{ result.ph }}</div>
+            <div style="font-size:0.72rem; color:#64748b;">pH</div><span
+              class="status-chip {% if result.ph_status == 'Optimal' %}chip-optimal{% else %}chip-low{% endif %}">{{
+              result.ph_status }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- NPK Bars -->
+      <div class="result-section">
+        <h6>📊 Nutrient Levels</h6>
+        <div class="npk-row">
+          <div class="d-flex justify-content-between"><span style="font-weight:600; font-size:0.88rem;">Nitrogen
+              (N)</span><span style="font-size:0.85rem; color:#64748b;">{{ result.nitrogen }} / 60 kg/ha</span></div>
+          <div class="npk-bar-wrap">
+            <div class="npk-bar-fill n-bar" style="width:{{ [result.nitrogen/60*100, 100]|min }}%"></div>
+          </div>
+        </div>
+        <div class="npk-row">
+          <div class="d-flex justify-content-between"><span style="font-weight:600; font-size:0.88rem;">Phosphorus
+              (P)</span><span style="font-size:0.85rem; color:#64748b;">{{ result.phosphorus }} / 50 kg/ha</span></div>
+          <div class="npk-bar-wrap">
+            <div class="npk-bar-fill p-bar" style="width:{{ [result.phosphorus/50*100, 100]|min }}%"></div>
+          </div>
+        </div>
+        <div class="npk-row">
+          <div class="d-flex justify-content-between"><span style="font-weight:600; font-size:0.88rem;">Potassium
+              (K)</span><span style="font-size:0.85rem; color:#64748b;">{{ result.potassium }} / 300 kg/ha</span></div>
+          <div class="npk-bar-wrap">
+            <div class="npk-bar-fill k-bar" style="width:{{ [result.potassium/300*100, 100]|min }}%"></div>
+          </div>
+        </div>
+        <!-- pH Scale -->
+        <div style="margin-top:16px;">
+          <div class="d-flex justify-content-between mb-1"><span style="font-weight:600; font-size:0.88rem;">pH
+              Scale</span><span style="font-size:0.85rem; color:#64748b;">{{ result.ph }}</span></div>
+          <div class="ph-bar">
+            <div class="ph-pointer" style="left:{{ ((result.ph - 3) / 7 * 100) }}%"></div>
+          </div>
+          <div class="d-flex justify-content-between mt-1" style="font-size:0.72rem; color:#94a3b8;"><span>3
+              (Acid)</span><span>7 (Neutral)</span><span>10 (Alk)</span></div>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        {% if result.issues %}
+        <div class="col-md-6">
+          <div class="result-section">
+            <h6>⚠️ Issues Detected</h6>
+            {% for issue in result.issues %}
+            <div class="issue-row"><i class="fas fa-exclamation-triangle mt-1 flex-shrink-0"></i>{{ issue }}</div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+        {% if result.recommendations %}
+        <div class="col-md-6">
+          <div class="result-section">
+            <h6>✅ Recommendations</h6>
+            {% for rec in result.recommendations %}
+            <div class="rec-row"><i class="fas fa-check-circle mt-1 flex-shrink-0"></i>{{ rec }}</div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="result-section">
+        <h6>🌾 Best Crops for Your Soil</h6>
+        {% for crop in result.crop_suggestions %}<span class="crop-chip">{{ crop }}</span>{% endfor %}
+      </div>
+
+      {% else %}
+      <div class="empty-state">
+        <div style="font-size:4rem; margin-bottom:16px;">🧪</div>
+        <h4 style="color:#44403c; font-weight:700;">Run Soil Analysis</h4>
+        <p style="color:#78716c; max-width:360px; margin:auto;">Enter your soil NPK values, pH, and moisture data on the
+          left to get a complete AI-powered soil health report.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
