@@ -1,0 +1,7 @@
+[
+    {
+        "key": "ctrl+v",
+        "command": "-workbench.extensions.action.installExtension"
+    }
+]
+

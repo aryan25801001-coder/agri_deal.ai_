@@ -1,0 +1,487 @@
+{% extends "base.html" %}
+{% block title %}AI Price Predictions & Crop Advisor - AI AgriMarket{% endblock %}
+{% block extra_css %}
+<style>
+    .ai-hero {
+        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
+        color: white;
+        padding: 55px 0 80px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .ai-hero::before {
+        content: '';
+        position: absolute;
+        top: -80px;
+        right: -80px;
+        width: 350px;
+        height: 350px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+    }
+
+    .ai-hero h1 {
+        font-weight: 800;
+        font-size: 2.2rem;
+        letter-spacing: -1px;
+    }
+
+    .ai-badge {
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        padding: 5px 16px;
+        border-radius: 20px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #c7d2fe;
+    }
+
+    .pred-card {
+        background: white;
+        border-radius: 18px;
+        padding: 26px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        transition: all 0.25s;
+        height: 100%;
+    }
+
+    .pred-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(79, 70, 229, 0.12);
+        border-color: #c7d2fe;
+    }
+
+    .pred-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 16px;
+    }
+
+    .pred-cat {
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #94a3b8;
+        margin-bottom: 6px;
+    }
+
+    .pred-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 14px;
+    }
+
+    .price-row {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+
+    .price-box {
+        flex: 1;
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 12px;
+        text-align: center;
+    }
+
+    .price-box .amt {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #1e293b;
+    }
+
+    .price-box .lbl {
+        font-size: 0.72rem;
+        color: #94a3b8;
+        font-weight: 500;
+    }
+
+    .pred-box {
+        flex: 1;
+        border-radius: 10px;
+        padding: 12px;
+        text-align: center;
+    }
+
+    .trend-up-bg {
+        background: #dcfce7;
+    }
+
+    .trend-down-bg {
+        background: #fee2e2;
+    }
+
+    .pred-box .amt {
+        font-size: 1.4rem;
+        font-weight: 800;
+    }
+
+    .pred-box.trend-up-bg .amt {
+        color: #16a34a;
+    }
+
+    .pred-box.trend-down-bg .amt {
+        color: #dc2626;
+    }
+
+    .change-badge {
+        border-radius: 20px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        padding: 4px 12px;
+    }
+
+    .conf-bar {
+        height: 6px;
+        border-radius: 3px;
+        background: #e2e8f0;
+        margin-top: 8px;
+        overflow: hidden;
+    }
+
+    .conf-fill {
+        height: 100%;
+        border-radius: 3px;
+        background: linear-gradient(90deg, #4338ca, #818cf8);
+    }
+
+    /* Crop Advisor */
+    .advisor-section {
+        background: linear-gradient(135deg, #0f172a, #1e293b);
+        border-radius: 24px;
+        padding: 44px 40px;
+        color: white;
+        margin: 50px 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .advisor-section::before {
+        content: '';
+        position: absolute;
+        top: -80px;
+        right: -80px;
+        width: 280px;
+        height: 280px;
+        background: rgba(99, 102, 241, 0.12);
+        border-radius: 50%;
+    }
+
+    .advisor-form select,
+    .advisor-form input {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 0.9rem;
+    }
+
+    .advisor-form select option {
+        background: #1e293b;
+    }
+
+    .advisor-form label {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+
+    .advisor-btn {
+        background: linear-gradient(135deg, #4338ca, #6366f1);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 11px 28px;
+        font-weight: 700;
+        transition: all 0.2s;
+    }
+
+    .advisor-btn:hover {
+        transform: scale(1.03);
+        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+        color: white;
+    }
+
+    .result-crop-chip {
+        display: inline-block;
+        background: rgba(99, 102, 241, 0.2);
+        border: 1px solid rgba(99, 102, 241, 0.4);
+        border-radius: 20px;
+        padding: 8px 20px;
+        margin: 6px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: default;
+        transition: all 0.2s;
+    }
+
+    .result-crop-chip:hover {
+        background: rgba(99, 102, 241, 0.35);
+        transform: scale(1.04);
+    }
+
+    .profit-table thead th {
+        background: #4338ca;
+        color: white;
+        font-weight: 600;
+        font-size: 0.83rem;
+        padding: 12px 14px;
+    }
+
+    .profit-table td {
+        padding: 11px 14px;
+        vertical-align: middle;
+        font-size: 0.88rem;
+    }
+
+    .profit-table tr:hover td {
+        background: #f0f0ff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ai-hero">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="ai-badge mb-3 d-inline-block">🤖 Powered by Machine Learning</span>
+            <h1 class="mb-2">AI Price Predictions</h1>
+            <p style="opacity:0.75; max-width:520px; margin:auto;">Data-driven price forecasts for major agricultural
+                commodities + AI Crop Advisor for your state</p>
+        </div>
+
+        <div class="row g-4">
+            {% for p in predictions %}
+            <div class="col-md-4">
+                <div class="pred-card">
+                    <div class="pred-icon {% if p.trend == 'up' %}trend-up-bg{% else %}trend-down-bg{% endif %}">
+                        <i
+                            class="fas {{ p.icon }} {% if p.trend == 'up' %}text-success{% else %}text-danger{% endif %}"></i>
+                    </div>
+                    <div class="pred-cat">Price Forecast</div>
+                    <div class="pred-name">{{ p.category }}</div>
+                    <div class="price-row">
+                        <div class="price-box">
+                            <div class="amt">₹{{ p.current_price }}</div>
+                            <div class="lbl">Current</div>
+                        </div>
+                        <div class="pred-box {% if p.trend == 'up' %}trend-up-bg{% else %}trend-down-bg{% endif %}">
+                            <div class="amt">₹{{ p.predicted_price }}</div>
+                            <div class="lbl">30-Day Forecast</div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span
+                            class="change-badge {% if p.trend == 'up' %}bg-success text-white{% else %}bg-danger text-white{% endif %}">
+                            <i class="fas fa-arrow-{% if p.trend == 'up' %}up{% else %}down{% endif %} me-1"></i>{{
+                            p.change }}
+                        </span>
+                        <span style="font-size:0.8rem; color:#94a3b8;">{{ p.confidence }}% confident</span>
+                    </div>
+                    <div class="conf-bar mt-2">
+                        <div class="conf-fill" style="width:{{ p.confidence }}%"></div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- AI Crop Advisor -->
+<div class="container">
+    <div class="advisor-section">
+        <div class="row g-4 align-items-start">
+            <div class="col-lg-4">
+                <div style="background:rgba(99,102,241,0.15); border-radius:14px; padding:20px; margin-bottom:16px;">
+                    <div style="font-size:2rem; margin-bottom:8px;">🌾</div>
+                    <h3 style="font-weight:800; font-size:1.6rem; margin-bottom:8px;">AI Crop Advisor</h3>
+                    <p style="color:rgba(255,255,255,0.65); font-size:0.9rem; line-height:1.6; margin:0;">Select your
+                        state and farming season to get AI-powered crop recommendations with estimated profits.</p>
+                </div>
+                <div class="advisor-form">
+                    <div class="mb-3">
+                        <label>🗺️ State</label>
+                        <select id="advisorState" class="form-select" onchange="updateCrops()">
+                            {% for state in crop_data.keys() %}
+                            <option value="{{ state }}">{{ state }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label>🌱 Season</label>
+                        <select id="advisorSeason" class="form-select" onchange="updateCrops()">
+                            <option value="Kharif">Kharif (June – October)</option>
+                            <option value="Rabi">Rabi (October – March)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label>🌿 Soil Type</label>
+                        <select id="advisorSoil" class="form-select" onchange="updateCrops()">
+                            <option>Alluvial Soil</option>
+                            <option>Black Soil</option>
+                            <option>Red Soil</option>
+                            <option>Laterite Soil</option>
+                            <option>Sandy Loam</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label>📐 Land Area (acres)</label>
+                        <input type="number" id="advisorAcres" class="form-control" value="5" min="1">
+                    </div>
+                    <button class="advisor-btn w-100" onclick="updateCrops()">
+                        <i class="fas fa-magic me-2"></i>Get AI Recommendations
+                    </button>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <h5 style="font-weight:700; color:rgba(255,255,255,0.9); margin-bottom:16px;">🎯 Recommended Crops</h5>
+                <div id="cropChips" style="margin-bottom:24px;"></div>
+                <h5 style="font-weight:700; color:rgba(255,255,255,0.9); margin-bottom:14px;">📊 Estimated Profit Table
+                </h5>
+                <div style="border-radius:14px; overflow:hidden; border:1px solid rgba(255,255,255,0.15);">
+                    <table class="table profit-table mb-0" style="background:rgba(255,255,255,0.05);">
+                        <thead>
+                            <tr>
+                                <th>Crop</th>
+                                <th>Yield/Acre</th>
+                                <th>Market Rate</th>
+                                <th>Gross Profit*</th>
+                                <th>Suitability</th>
+                            </tr>
+                        </thead>
+                        <tbody id="profitTable" style="color:white;"></tbody>
+                    </table>
+                </div>
+                <p style="color:rgba(255,255,255,0.4); font-size:0.75rem; margin-top:8px;">*Estimated values based on
+                    historical mandi data. Actual profits may vary.</p>
+
+                <div
+                    style="background:rgba(234,179,8,0.12); border:1px solid rgba(234,179,8,0.3); border-radius:12px; padding:16px; margin-top:16px;">
+                    <div style="color:#fde68a; font-weight:700; margin-bottom:6px;"><i
+                            class="fas fa-lightbulb me-2"></i>AI Insight</div>
+                    <div id="aiInsight" style="color:rgba(255,255,255,0.7); font-size:0.88rem; line-height:1.7;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Market Insights -->
+    <div class="row g-4 mb-5">
+        <div class="col-12">
+            <h4 style="font-weight:800; margin-bottom:4px;">📈 Market <span style="color:#4338ca;">Insights</span></h4>
+            <div
+                style="width:40px; height:4px; background:linear-gradient(90deg,#4338ca,#f59e0b); border-radius:2px; margin-bottom:24px;">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100" style="border-radius:16px; border-left:4px solid #16a34a;">
+                <div class="card-body p-4">
+                    <div style="font-size:1.5rem; margin-bottom:10px;">📈</div>
+                    <h6 style="font-weight:700; color:#16a34a;">Rising Prices (Sell Now)</h6>
+                    <ul style="color:#475569; font-size:0.88rem; padding-left:16px;">
+                        <li>Vegetables — Hold 1-2 weeks, expected +15% rise</li>
+                        <li>Spices — Best time to sell in next 15 days</li>
+                        <li>Grains — Stable upward trend continues</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100" style="border-radius:16px; border-left:4px solid #dc2626;">
+                <div class="card-body p-4">
+                    <div style="font-size:1.5rem; margin-bottom:10px;">📉</div>
+                    <h6 style="font-weight:700; color:#dc2626;">Falling Prices (Act Fast)</h6>
+                    <ul style="color:#475569; font-size:0.88rem; padding-left:16px;">
+                        <li>Fruits — Sell immediately, -8% expected drop</li>
+                        <li>Pulses — Oversupply pushing prices down</li>
+                        <li>Avoid stockpiling these commodities</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100" style="border-radius:16px; border-left:4px solid #d97706;">
+                <div class="card-body p-4">
+                    <div style="font-size:1.5rem; margin-bottom:10px;">⚠️</div>
+                    <h6 style="font-weight:700; color:#d97706;">Watch List</h6>
+                    <ul style="color:#475569; font-size:0.88rem; padding-left:16px;">
+                        <li>Dairy — Stable with slight upward pressure</li>
+                        <li>Cotton — Monitor global demand signals</li>
+                        <li>Sugarcane — Government MSP to be revised</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    const cropData = {{ crop_data | tojson }};
+    const profitData = {
+        'Rice': { yield: 25, rate: 2800, suit: '⭐⭐⭐⭐⭐' },
+        'Wheat': { yield: 20, rate: 2200, suit: '⭐⭐⭐⭐⭐' },
+        'Maize': { yield: 22, rate: 1800, suit: '⭐⭐⭐⭐' },
+        'Cotton': { yield: 8, rate: 6500, suit: '⭐⭐⭐⭐' },
+        'Soybean': { yield: 12, rate: 4300, suit: '⭐⭐⭐⭐' },
+        'Sugarcane': { yield: 400, rate: 350, suit: '⭐⭐⭐' },
+        'Groundnut': { yield: 15, rate: 5200, suit: '⭐⭐⭐⭐' },
+        'Mustard': { yield: 10, rate: 5200, suit: '⭐⭐⭐⭐⭐' },
+        'Bajra': { yield: 18, rate: 2350, suit: '⭐⭐⭐' },
+        'Chickpea': { yield: 12, rate: 5400, suit: '⭐⭐⭐⭐' },
+        'Potato': { yield: 120, rate: 1200, suit: '⭐⭐⭐' },
+        'Jowar': { yield: 15, rate: 2970, suit: '⭐⭐⭐' },
+        'Barley': { yield: 18, rate: 1735, suit: '⭐⭐⭐' },
+        'Sunflower': { yield: 8, rate: 6400, suit: '⭐⭐⭐⭐' },
+        'Lentils': { yield: 10, rate: 5500, suit: '⭐⭐⭐⭐' },
+    };
+    const insights = {
+        'Punjab': 'Punjab\'s alluvial plains are among India\'s most fertile. Wheat and Rice rotation is traditional, but recent advisory suggests introducing Maize and Oilseeds to diversify and break the paddy-wheat cycle.',
+        'Maharashtra': 'Black cotton soil in Vidarbha is ideal for Cotton and Soybean. Rabi season offers excellent Chickpea yields.',
+        'default': 'Based on your state and season selection, the recommended crops are optimized for soil suitability, market demand, and expected profitability over the next harvest cycle.'
+    };
+
+    function updateCrops() {
+        const state = document.getElementById('advisorState').value;
+        const season = document.getElementById('advisorSeason').value;
+        const acres = parseFloat(document.getElementById('advisorAcres').value) || 5;
+        const crops = (cropData[state] || {})[season] || [];
+
+        // Chips
+        const chips = document.getElementById('cropChips');
+        chips.innerHTML = crops.map(c => `<span class="result-crop-chip">🌾 ${c}</span>`).join('');
+
+        // Table
+        const tbody = document.getElementById('profitTable');
+        tbody.innerHTML = crops.map(c => {
+            const d = profitData[c] || { yield: 15, rate: 3000, suit: '⭐⭐⭐' };
+            const gross = Math.round(d.yield * d.rate * acres / 10) * 10;
+            return `<tr>
+            <td><strong>${c}</strong></td>
+            <td>${d.yield} qtl/acre</td>
+            <td>₹${d.rate.toLocaleString('en-IN')}/qtl</td>
+            <td style="color:#4ade80; font-weight:700;">₹${(gross).toLocaleString('en-IN')}</td>
+            <td>${d.suit}</td>
+        </tr>`;
+        }).join('');
+
+        // Insight
+        document.getElementById('aiInsight').textContent = insights[state] || insights['default'];
+    }
+    updateCrops();
+</script>
+{% endblock %}
+{% endblock %}

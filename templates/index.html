@@ -1,0 +1,757 @@
+{% extends "base.html" %}
+{% block title %}AI AgriMarket - Smart Agricultural Marketplace{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ===== HERO ===== */
+    .hero-section {
+        padding: 90px 0 70px;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: #bbf7d0;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 0.83rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        backdrop-filter: blur(4px);
+    }
+
+    .hero-title {
+        font-size: 3.2rem;
+        font-weight: 800;
+        line-height: 1.15;
+        letter-spacing: -1.5px;
+        margin-bottom: 18px;
+    }
+
+    .hero-title span {
+        color: #86efac;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.85;
+        max-width: 480px;
+        line-height: 1.7;
+        margin-bottom: 32px;
+    }
+
+    .hero-cta-wrap {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+
+    .btn-hero-primary {
+        background: white;
+        color: #14532d;
+        font-weight: 700;
+        padding: 13px 28px;
+        border-radius: 12px;
+        border: none;
+        font-size: 1rem;
+        transition: all 0.2s;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-hero-primary:hover {
+        background: #f0fdf4;
+        transform: translateY(-2px);
+        color: #14532d;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-hero-outline {
+        background: rgba(255, 255, 255, 0.12);
+        color: white;
+        font-weight: 600;
+        padding: 13px 28px;
+        border-radius: 12px;
+        border: 1.5px solid rgba(255, 255, 255, 0.4);
+        font-size: 1rem;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        backdrop-filter: blur(4px);
+    }
+
+    .btn-hero-outline:hover {
+        background: rgba(255, 255, 255, 0.22);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .hero-illustration {
+        font-size: 130px;
+        opacity: 0.15;
+        text-align: center;
+    }
+
+    .hero-floating-cards {
+        position: relative;
+    }
+
+    .hero-card-float {
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 14px;
+        padding: 16px 20px;
+        backdrop-filter: blur(8px);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        color: white;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .hero-card-float:nth-child(2) {
+        animation-delay: 1s;
+        margin-left: 24px;
+    }
+
+    .hero-card-float:nth-child(3) {
+        animation-delay: 2s;
+    }
+
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-8px);
+        }
+    }
+
+    .hero-card-icon {
+        width: 44px;
+        height: 44px;
+        background: rgba(255, 255, 255, 0.18);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        flex-shrink: 0;
+    }
+
+    .hero-card-val {
+        font-size: 1.3rem;
+        font-weight: 800;
+    }
+
+    .hero-card-lab {
+        font-size: 0.78rem;
+        opacity: 0.8;
+    }
+
+    /* ===== STATS STRIP ===== */
+    .stats-strip {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 8px 40px rgba(22, 163, 74, 0.12);
+        padding: 36px 32px;
+        margin-top: -40px;
+        position: relative;
+        z-index: 10;
+        border: 1px solid #e2e8f0;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-item .num {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #16a34a;
+        letter-spacing: -1px;
+        line-height: 1;
+    }
+
+    .stat-item .lbl {
+        font-size: 0.85rem;
+        color: #64748b;
+        font-weight: 500;
+        margin-top: 4px;
+    }
+
+    .stat-divider {
+        width: 1px;
+        background: #e2e8f0;
+        height: 60px;
+        margin: auto;
+    }
+
+    /* ===== FEATURES ===== */
+    .feature-card {
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        padding: 32px 24px;
+        text-align: center;
+        height: 100%;
+        transition: all 0.3s;
+        background: white;
+    }
+
+    .feature-card:hover {
+        border-color: #86efac;
+        box-shadow: 0 12px 40px rgba(22, 163, 74, 0.15);
+        transform: translateY(-6px);
+    }
+
+    .feature-icon {
+        width: 72px;
+        height: 72px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin: 0 auto 20px;
+    }
+
+    .fi-green {
+        background: #dcfce7;
+        color: #16a34a;
+    }
+
+    .fi-blue {
+        background: #dbeafe;
+        color: #2563eb;
+    }
+
+    .fi-amber {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    .fi-red {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .fi-cyan {
+        background: #cffafe;
+        color: #0891b2;
+    }
+
+    .fi-purple {
+        background: #ede9fe;
+        color: #7c3aed;
+    }
+
+    .feature-card h5 {
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 10px;
+    }
+
+    .feature-card p {
+        color: #64748b;
+        font-size: 0.9rem;
+        line-height: 1.65;
+        margin-bottom: 0;
+    }
+
+    /* ===== PRODUCT CARDS ===== */
+    .prod-card {
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        overflow: hidden;
+        height: 100%;
+        background: white;
+        transition: all 0.25s;
+    }
+
+    .prod-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 16px 48px rgba(22, 163, 74, 0.15);
+        border-color: #86efac;
+    }
+
+    .prod-img {
+        height: 170px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.5rem;
+        background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+        position: relative;
+    }
+
+    .prod-body {
+        padding: 18px;
+    }
+
+    .prod-name {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #1e293b;
+        margin-bottom: 4px;
+    }
+
+    .prod-cat {
+        font-size: 0.78rem;
+        color: #16a34a;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+    }
+
+    .prod-desc {
+        font-size: 0.85rem;
+        color: #64748b;
+        line-height: 1.5;
+        margin-bottom: 14px;
+    }
+
+    .prod-footer {
+        padding: 14px 18px;
+        border-top: 1px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #fafafa;
+    }
+
+    /* ===== MARKET PRICES TABLE ===== */
+    .price-table-wrap {
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+    }
+
+    .price-table thead th {
+        background: #16a34a;
+        color: white;
+        font-weight: 600;
+        font-size: 0.85rem;
+        padding: 14px 16px;
+        border: none;
+    }
+
+    .price-table tbody td {
+        padding: 12px 16px;
+        vertical-align: middle;
+        border-color: #f1f5f9;
+    }
+
+    .price-table tbody tr:hover {
+        background: #f0fdf4;
+    }
+
+    .change-up {
+        color: #16a34a;
+        font-weight: 600;
+    }
+
+    .change-down {
+        color: #dc2626;
+        font-weight: 600;
+    }
+
+    /* ===== PREDICTION MINI ===== */
+    .pred-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .pred-row:last-child {
+        border-bottom: none;
+    }
+
+    .pred-name {
+        font-weight: 600;
+        color: #1e293b;
+    }
+
+    .pred-conf {
+        font-size: 0.78rem;
+        color: #94a3b8;
+    }
+
+    .pred-price {
+        font-weight: 800;
+        color: #16a34a;
+        font-size: 1.1rem;
+    }
+
+    /* ===== AI TOOLS BANNER ===== */
+    .ai-tools-banner {
+        background: linear-gradient(135deg, #0f172a 0%, #14532d 100%);
+        border-radius: 24px;
+        padding: 50px 40px;
+        color: white;
+        margin: 60px 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .ai-tools-banner::before {
+        content: '';
+        position: absolute;
+        top: -60px;
+        right: -60px;
+        width: 250px;
+        height: 250px;
+        background: rgba(22, 163, 74, 0.2);
+        border-radius: 50%;
+    }
+
+    .ai-tool-chip {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        padding: 18px 20px;
+        text-align: center;
+        transition: all 0.2s;
+        cursor: pointer;
+        text-decoration: none;
+        color: white;
+        display: block;
+    }
+
+    .ai-tool-chip:hover {
+        background: rgba(255, 255, 255, 0.18);
+        transform: translateY(-3px);
+        color: white;
+    }
+
+    .ai-tool-chip i {
+        font-size: 1.8rem;
+        margin-bottom: 8px;
+    }
+
+    .ai-tool-chip span {
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ===== HERO ===== -->
+<div class="hero-section">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6 fade-up">
+                <div class="hero-badge">
+                    <i class="fas fa-bolt"></i> AI-Powered Agricultural Marketplace
+                </div>
+                <h1 class="hero-title">
+                    Smart Farming<br>Starts with <span>AI AgriMarket</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Connect farmers directly with buyers. Get real-time prices, AI predictions, soil analysis, and crop
+                    disease detection — all in one place.
+                </p>
+                <div class="hero-cta-wrap">
+                    <a href="{{ url_for('market') }}" class="btn-hero-primary">
+                        <i class="fas fa-store"></i> Browse Market
+                    </a>
+                    <a href="{{ url_for('register') }}" class="btn-hero-outline">
+                        <i class="fas fa-user-plus"></i> Join Free
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 fade-up-delay">
+                <div class="hero-floating-cards">
+                    <div class="hero-card-float">
+                        <div class="hero-card-icon"><i class="fas fa-robot"></i></div>
+                        <div>
+                            <div class="hero-card-val">AI Predictions</div>
+                            <div class="hero-card-lab">Price trends powered by machine learning</div>
+                        </div>
+                    </div>
+                    <div class="hero-card-float">
+                        <div class="hero-card-icon"><i class="fas fa-flask"></i></div>
+                        <div>
+                            <div class="hero-card-val">Soil Analysis</div>
+                            <div class="hero-card-lab">NPK & pH testing with recommendations</div>
+                        </div>
+                    </div>
+                    <div class="hero-card-float">
+                        <div class="hero-card-icon"><i class="fas fa-bug"></i></div>
+                        <div>
+                            <div class="hero-card-val">Disease Detector</div>
+                            <div class="hero-card-lab">Instant crop disease diagnosis & treatment</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== STATS STRIP ===== -->
+<div class="container">
+    <div class="stats-strip fade-up">
+        <div class="row align-items-center g-3">
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="num">{{ stats.total_products }}+</div>
+                    <div class="lbl"><i class="fas fa-box me-1 text-success"></i>Products Listed</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="num">{{ stats.total_farmers }}+</div>
+                    <div class="lbl"><i class="fas fa-tractor me-1 text-success"></i>Registered Farmers</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="num">{{ stats.total_buyers }}+</div>
+                    <div class="lbl"><i class="fas fa-users me-1 text-success"></i>Active Buyers</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="num">{{ stats.total_orders }}+</div>
+                    <div class="lbl"><i class="fas fa-shopping-cart me-1 text-success"></i>Orders Placed</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== FEATURED PRODUCTS ===== -->
+<div class="container mt-5 mb-5">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h2 class="section-title mb-1">Featured <span>Products</span></h2>
+            <div class="section-divider"></div>
+        </div>
+        <a href="{{ url_for('market') }}" class="btn btn-outline-primary btn-sm px-4">
+            View All <i class="fas fa-arrow-right ms-1"></i>
+        </a>
+    </div>
+    <div class="row g-4">
+        {% if products %}
+        {% for product in products %}
+        <div class="col-sm-6 col-lg-3">
+            <div class="prod-card">
+                <div class="prod-img">
+                    {% if product.category == 'Vegetables' %}<i class="fas fa-carrot" style="color:#16a34a"></i>
+                    {% elif product.category == 'Fruits' %}<i class="fas fa-apple-alt" style="color:#dc2626"></i>
+                    {% elif product.category == 'Grains' %}<i class="fas fa-seedling" style="color:#d97706"></i>
+                    {% elif product.category == 'Spices' %}<i class="fas fa-pepper-hot" style="color:#ea580c"></i>
+                    {% elif product.category == 'Dairy' %}<i class="fas fa-cheese" style="color:#eab308"></i>
+                    {% else %}<i class="fas fa-shopping-basket" style="color:#8b5cf6"></i>{% endif %}
+                    {% if product.is_organic %}
+                    <span class="position-absolute top-0 end-0 m-2 organic-badge">🌿 Organic</span>
+                    {% endif %}
+                </div>
+                <div class="prod-body">
+                    <div class="prod-cat">{{ product.category }}</div>
+                    <div class="prod-name">{{ product.name }}</div>
+                    <div class="prod-desc">{{ (product.description or 'Fresh quality produce directly from farm.')[:70]
+                        }}...</div>
+                </div>
+                <div class="prod-footer">
+                    <span class="price-tag">₹{{ product.price_per_unit }}/{{ product.unit }}</span>
+                    <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-primary btn-sm">Buy
+                        Now</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="col-12">
+            <div class="text-center py-5" style="background:white; border-radius:16px; border: 2px dashed #bbf7d0;">
+                <i class="fas fa-box-open fa-4x mb-3" style="color:#bbf7d0;"></i>
+                <h5 class="text-muted">No products yet</h5>
+                <p class="text-muted">Be the first farmer to list your fresh produce!</p>
+                <a href="{{ url_for('add_product') }}" class="btn btn-primary px-4">
+                    <i class="fas fa-plus me-2"></i>Add Product
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ===== AI TOOLS BANNER ===== -->
+<div class="container">
+    <div class="ai-tools-banner">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-5">
+                <div class="badge-pill bg-success mb-3">🤖 AI Powered Tools</div>
+                <h2 style="font-weight:800; font-size:2rem; letter-spacing:-0.5px;" class="mb-3">
+                    Smart Tools for Smart Farmers
+                </h2>
+                <p style="color:rgba(255,255,255,0.7); font-size:0.95rem; line-height:1.7;">
+                    Use our AI-powered tools to analyze soil quality, detect crop diseases, and get accurate price
+                    predictions — all for free.
+                </p>
+            </div>
+            <div class="col-lg-7">
+                <div class="row g-3">
+                    <div class="col-4">
+                        <a href="{{ url_for('ai_predictions') }}" class="ai-tool-chip">
+                            <div><i class="fas fa-chart-line text-warning"></i></div>
+                            <div class="mt-2"><span>Price Predictions</span></div>
+                        </a>
+                    </div>
+                    <div class="col-4">
+                        <a href="{{ url_for('soil_quality') }}" class="ai-tool-chip">
+                            <div><i class="fas fa-flask" style="color:#86efac;"></i></div>
+                            <div class="mt-2"><span>Soil Analyzer</span></div>
+                        </a>
+                    </div>
+                    <div class="col-4">
+                        <a href="{{ url_for('disease_detection') }}" class="ai-tool-chip">
+                            <div><i class="fas fa-bug text-danger"></i></div>
+                            <div class="mt-2"><span>Disease Detector</span></div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== TODAY'S PRICES ===== -->
+<div class="container mt-5 mb-5">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h2 class="section-title mb-1">Today's <span>Market Prices</span></h2>
+            <div class="section-divider"></div>
+        </div>
+        <a href="{{ url_for('market_prices') }}" class="btn btn-outline-primary btn-sm px-4">
+            Full Prices <i class="fas fa-arrow-right ms-1"></i>
+        </a>
+    </div>
+    <div class="price-table-wrap shadow-sm">
+        <table class="table price-table mb-0">
+            <thead>
+                <tr>
+                    <th>Commodity</th>
+                    <th>Price</th>
+                    <th>Unit</th>
+                    <th>Change</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>🍅 Tomato</strong></td>
+                    <td><span class="price-tag">₹45</span></td>
+                    <td>per kg</td>
+                    <td class="change-up"><i class="fas fa-arrow-up me-1"></i>+5.2%</td>
+                </tr>
+                <tr>
+                    <td><strong>🥔 Potato</strong></td>
+                    <td><span class="price-tag">₹28</span></td>
+                    <td>per kg</td>
+                    <td class="change-down"><i class="fas fa-arrow-down me-1"></i>-2.1%</td>
+                </tr>
+                <tr>
+                    <td><strong>🧅 Onion</strong></td>
+                    <td><span class="price-tag">₹35</span></td>
+                    <td>per kg</td>
+                    <td class="change-up"><i class="fas fa-arrow-up me-1"></i>+8.5%</td>
+                </tr>
+                <tr>
+                    <td><strong>🌾 Wheat</strong></td>
+                    <td><span class="price-tag">₹2200</span></td>
+                    <td>per quintal</td>
+                    <td class="change-up"><i class="fas fa-arrow-up me-1"></i>+1.2%</td>
+                </tr>
+                <tr>
+                    <td><strong>🍚 Rice</strong></td>
+                    <td><span class="price-tag">₹2800</span></td>
+                    <td>per quintal</td>
+                    <td class="change-down"><i class="fas fa-arrow-down me-1"></i>-0.8%</td>
+                </tr>
+                <tr>
+                    <td><strong>🥛 Milk</strong></td>
+                    <td><span class="price-tag">₹45</span></td>
+                    <td>per liter</td>
+                    <td class="change-up"><i class="fas fa-arrow-right me-1"></i>0.0%</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ===== WHY CHOOSE US ===== -->
+<div class="container mb-5">
+    <div class="text-center mb-5">
+        <h2 class="section-title">Why Choose <span>AI AgriMarket?</span></h2>
+        <div class="section-divider mx-auto"></div>
+        <p class="text-muted" style="max-width:520px; margin:auto;">Everything a modern farmer needs — AI tools, direct
+            market access, and real-time insights.</p>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon fi-green"><i class="fas fa-robot"></i></div>
+                <h5>AI Price Predictions</h5>
+                <p>Get accurate price forecasts powered by machine learning. Sell at the right time and maximize your
+                    profit.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon fi-blue"><i class="fas fa-handshake"></i></div>
+                <h5>Direct to Buyer</h5>
+                <p>No middlemen, no commission cuts. Connect directly with buyers and get fair prices for your produce.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon fi-amber"><i class="fas fa-chart-bar"></i></div>
+                <h5>Real-time Prices</h5>
+                <p>Live mandi prices from across India. Stay updated on market rates before you sell your harvest.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon fi-red"><i class="fas fa-bug"></i></div>
+                <h5>Disease Detection</h5>
+                <p>Upload a photo or describe symptoms — our AI instantly identifies crop diseases and provides a
+                    treatment plan.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon fi-cyan"><i class="fas fa-flask"></i></div>
+                <h5>Soil Analysis</h5>
+                <p>Enter your NPK and pH values to get a full soil health report with fertilizer recommendations.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon fi-purple"><i class="fas fa-cloud-sun-rain"></i></div>
+                <h5>Weather Insights</h5>
+                <p>Plan your farming based on accurate weather forecasts including temperature, humidity and rainfall
+                    data.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

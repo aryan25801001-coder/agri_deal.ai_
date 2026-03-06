@@ -1,0 +1,22 @@
+{
+    // VSCode Settings to disable VSIX extension install on paste
+    // To restore simple Ctrl+V text pasting, add these settings:
+    
+    "extensions.ignoreRecommendations": true,
+    "extensions.autoUpdate": false,
+    
+    // Note: The VSIX install on paste feature is controlled by VSCode's built-in
+    // extension handler. To disable the Ctrl+V shortcut for VSIX installation:
+    //
+    // 1. Go to File → Preferences → Keyboard Shortcuts
+    // 2. Search for "workbench.extensions.action.installExtension"
+    // 3. Right-click and remove the Ctrl+V binding if assigned
+    //
+    // Or manually add to keybindings.json (File → Preferences → Keyboard Shortcuts → Open JSON):
+    // {
+    //     "key": "ctrl+v",
+    //     "command": "-workbench.extensions.action.installExtension",
+    //     "when": "editorTextFocus"
+    // }
+}
+

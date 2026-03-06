@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - AI AgriMarket{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('market') }}">Market</a></li>
+            <li class="breadcrumb-item active">{{ product.name }}</li>
+        </ol>
+    </nav>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="product-image" style="height: 400px;">
+                    {% if product.category == 'Vegetables' %}
+                        <i class="fas fa-carrot"></i>
+                    {% elif product.category == 'Fruits' %}
+                        <i class="fas fa-apple-alt"></i>
+                    {% elif product.category == 'Grains' %}
+                        <i class="fas fa-seedling"></i>
+                    {% elif product.category == 'Spices' %}
+                        <i class="fas fa-pepper-hot"></i>
+                    {% else %}
+                        <i class="fas fa-shopping-basket"></i>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h2>{{ product.name }}</h2>
+                            <p class="text-muted">{{ product.category }}</p>
+                        </div>
+                        {% if product.is_organic %}
+                        <span class="organic-badge">Organic Certified</span>
+                        {% endif %}
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="mb-3">
+                        <span class="price-tag" style="font-size: 1.5rem;">₹{{ product.price_per_unit }}/{{ product.unit }}</span>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <p><strong><i class="fas fa-box me-2"></i>Available:</strong> {{ product.quantity }} {{ product.unit }}</p>
+                        </div>
+                        <div class="col-6">
+                            <p><strong><i class="fas fa-map-marker-alt me-2"></i>Location:</strong> {{ product.location or 'Not specified' }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <p><strong><i class="fas fa-user me-2"></i>Seller:</strong> {{ product.seller_name }}</p>
+                        <p><strong><i class="fas fa-phone me-2"></i>Contact:</strong> {{ product.seller_phone or 'Not available' }}</p>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h5>Description</h5>
+                    <p>{{ product.description or 'No description provided.' }}</p>
+                    
+                    {% if current_user.is_authenticated and current_user.id != product.seller_id %}
+                    <hr>
+                    <form method="POST" action="{{ url_for('order_product', product_id=product.id) }}">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="form-label">Quantity ({{ product.unit }})</label>
+                                <input type="number" name="quantity" class="form-control" min="1" max="{{ product.quantity }}" value="1" required>
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-shopping-cart me-2"></i>Place Order
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    {% elif not current_user.is_authenticated %}
+                    <hr>
+                    <a href="{{ url_for('login') }}" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login to Buy
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Reviews Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-comments me-2"></i>Reviews</h5>
+                </div>
+                <div class="card-body">
+                    {% if reviews %}
+                        {% for review in reviews %}
+                        <div class="border-bottom pb-3 mb-3">
+                            <div class="d-flex justify-content-between">
+                                <strong>{{ review.username }}</strong>
+                                <div>
+                                    {% for i in range(5) %}
+                                    <i class="fas fa-star {% if i < review.rating %}text-warning{% else %}text-muted{% endif %}"></i>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <p class="mb-0 mt-2">{{ review.comment }}</p>
+                            <small class="text-muted">{{ review.created_at }}</small>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No reviews yet. Be the first to review!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Related Products -->
+    {% if related %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <h4 class="mb-3">Related Products</h4>
+            <div class="row">
+                {% for rel in related %}
+                <div class="col-md-3 mb-3">
+                    <div class="card product-card h-100">
+                        <div class="product-image" style="height: 150px;">
+                            <i class="fas fa-shopping-basket"></i>
+                        </div>
+                        <div class="card-body">
+                            <h6>{{ rel.name }}</h6>
+                            <span class="price-tag">₹{{ rel.price_per_unit }}/{{ rel.unit }}</span>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{{ url_for('product_detail', product_id=rel.id) }}" class="btn btn-sm btn-primary w-100">View</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+

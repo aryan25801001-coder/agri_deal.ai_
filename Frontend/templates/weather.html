@@ -1,0 +1,558 @@
+{% extends "base.html" %}
+{% block title %}Weather Forecast - AI AgriMarket{% endblock %}
+{% block extra_css %}
+<style>
+    .weather-hero {
+        background: linear-gradient(135deg, #0369a1 0%, #0ea5e9 50%, #38bdf8 100%);
+        color: white;
+        padding: 50px 0 80px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .weather-hero::before {
+        content: '';
+        position: absolute;
+        top: -80px;
+        right: -80px;
+        width: 350px;
+        height: 350px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 50%;
+    }
+
+    .weather-hero::after {
+        content: '';
+        position: absolute;
+        bottom: -60px;
+        left: -60px;
+        width: 250px;
+        height: 250px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 50%;
+    }
+
+    .location-form {
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 16px;
+        padding: 24px;
+        backdrop-filter: blur(8px);
+        margin-bottom: 30px;
+    }
+
+    .location-form select {
+        background: rgba(255, 255, 255, 0.95);
+        border: none;
+        border-radius: 10px;
+        font-weight: 500;
+        padding: 10px 14px;
+        height: auto;
+    }
+
+    .location-form .btn {
+        background: white;
+        color: #0369a1;
+        font-weight: 700;
+        border-radius: 10px;
+        padding: 10px 24px;
+        border: none;
+        transition: all 0.2s;
+    }
+
+    .location-form .btn:hover {
+        transform: scale(1.03);
+        background: #f0f9ff;
+    }
+
+    .current-weather-card {
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 24px;
+        padding: 36px;
+        backdrop-filter: blur(10px);
+        text-align: center;
+    }
+
+    .cur-temp {
+        font-size: 5rem;
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: -3px;
+    }
+
+    .cur-icon {
+        font-size: 3.5rem;
+        margin-bottom: 10px;
+    }
+
+    .cur-condition {
+        font-size: 1.2rem;
+        font-weight: 600;
+        opacity: 0.95;
+        margin-bottom: 6px;
+    }
+
+    .cur-feels {
+        font-size: 0.9rem;
+        opacity: 0.75;
+    }
+
+    .weather-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+        margin-top: 24px;
+    }
+
+    .weather-stat {
+        background: rgba(255, 255, 255, 0.12);
+        border-radius: 12px;
+        padding: 14px 12px;
+        text-align: center;
+    }
+
+    .weather-stat .val {
+        font-size: 1.4rem;
+        font-weight: 700;
+    }
+
+    .weather-stat .lbl {
+        font-size: 0.75rem;
+        opacity: 0.75;
+    }
+
+    .forecast-strip {
+        background: white;
+        border-radius: 20px;
+        padding: 28px;
+        box-shadow: 0 8px 40px rgba(3, 105, 161, 0.12);
+        margin-top: -40px;
+        position: relative;
+        z-index: 10;
+        border: 1px solid #e0f2fe;
+    }
+
+    .forecast-cards {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding-bottom: 6px;
+    }
+
+    .forecast-cards::-webkit-scrollbar {
+        height: 4px;
+    }
+
+    .forecast-cards::-webkit-scrollbar-thumb {
+        background: #0ea5e9;
+        border-radius: 2px;
+    }
+
+    .fc-card {
+        min-width: 100px;
+        background: #f0f9ff;
+        border: 1px solid #e0f2fe;
+        border-radius: 14px;
+        padding: 16px 10px;
+        text-align: center;
+        transition: all 0.2s;
+        cursor: default;
+        flex-shrink: 0;
+    }
+
+    .fc-card:first-child {
+        background: linear-gradient(135deg, #0369a1, #0ea5e9);
+        color: white;
+        border-color: transparent;
+    }
+
+    .fc-card:first-child .fc-day,
+    .fc-card:first-child .fc-cond,
+    .fc-card:first-child .fc-rain {
+        color: rgba(255, 255, 255, 0.85) !important;
+    }
+
+    .fc-card:hover:not(:first-child) {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(3, 105, 161, 0.12);
+    }
+
+    .fc-day {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #64748b;
+        margin-bottom: 8px;
+    }
+
+    .fc-icon {
+        font-size: 1.6rem;
+        margin-bottom: 8px;
+    }
+
+    .fc-temps {
+        font-size: 0.88rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+
+    .fc-low {
+        color: #64748b;
+    }
+
+    .fc-rain {
+        font-size: 0.72rem;
+        color: #0369a1;
+        margin-top: 4px;
+    }
+
+    .fc-cond {
+        font-size: 0.7rem;
+        color: #94a3b8;
+        margin-top: 4px;
+        line-height: 1.2;
+    }
+
+    .detail-cards {
+        margin-top: 28px;
+    }
+
+    .detail-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        border: 1px solid #e0f2fe;
+        box-shadow: 0 4px 16px rgba(3, 105, 161, 0.07);
+        height: 100%;
+        transition: all 0.2s;
+    }
+
+    .detail-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 28px rgba(3, 105, 161, 0.14);
+    }
+
+    .detail-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        background: #e0f2fe;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: #0369a1;
+        margin-bottom: 14px;
+    }
+
+    .farming-tip-card {
+        background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+        border: 1px solid #bbf7d0;
+        border-radius: 16px;
+        padding: 22px;
+        margin-top: 10px;
+    }
+
+    .live-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(22, 163, 74, 0.15);
+        border: 1px solid rgba(22, 163, 74, 0.3);
+        color: #16a34a;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .live-dot {
+        width: 7px;
+        height: 7px;
+        background: #16a34a;
+        border-radius: 50%;
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            opacity: 1;
+            transform: scale(1)
+        }
+
+        50% {
+            opacity: 0.5;
+            transform: scale(1.3)
+        }
+    }
+
+    .uv-bar {
+        height: 8px;
+        border-radius: 4px;
+        background: linear-gradient(90deg, #22c55e, #eab308, #ef4444);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="weather-hero">
+    <div class="container">
+        <div class="row justify-content-center mb-4">
+            <div class="col-lg-10">
+                <div class="text-center mb-4">
+                    <span class="live-badge"><span class="live-dot"></span>Live Weather</span>
+                    <h1 class="mt-3 mb-1" style="font-weight:800; font-size:2.2rem;">🌤️ India Weather Forecast</h1>
+                    <p style="opacity:0.8;">10-Day live forecast powered by Open-Meteo API — Select your State &
+                        District</p>
+                </div>
+
+                <!-- Location Selector -->
+                <div class="location-form">
+                    <form method="POST" class="row g-3 align-items-end">
+                        <div class="col-md-4">
+                            <label class="form-label text-white fw-bold small">State</label>
+                            <select name="state" id="stateSelect" class="form-select" onchange="updateDistricts()">
+                                {% for state in locations.keys() %}
+                                <option value="{{ state }}" {% if state==selected_state %}selected{% endif %}>{{ state
+                                    }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-white fw-bold small">City / District</label>
+                            <select name="district" id="districtSelect" class="form-select">
+                                {% for district in locations[selected_state].keys() %}
+                                <option value="{{ district }}" {% if district==selected_district %}selected{% endif %}>
+                                    {{ district }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn w-100">
+                                <i class="fas fa-search me-2"></i>Get Live Weather
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                {% if error_msg %}
+                <div class="alert alert-warning text-center py-2"><i class="fas fa-wifi-slash me-2"></i>{{ error_msg }}
+                </div>
+                {% endif %}
+
+                <!-- Current Weather -->
+                <div class="row g-4 align-items-center">
+                    <div class="col-md-5">
+                        <div class="current-weather-card">
+                            <div class="cur-icon">
+                                <i class="fas {{ weather.icon }}" style="color: {{ weather.color }};"></i>
+                            </div>
+                            <div class="cur-temp">{{ weather.temp }}°</div>
+                            <div class="cur-condition">{{ weather.condition }}</div>
+                            <div class="cur-feels">Feels like {{ weather.feels }}°C · {{ selected_district }}, {{
+                                selected_state }}</div>
+                            <div class="weather-stats">
+                                <div class="weather-stat">
+                                    <div class="val">{{ weather.humidity }}%</div>
+                                    <div class="lbl">💧 Humidity</div>
+                                </div>
+                                <div class="weather-stat">
+                                    <div class="val">{{ weather.wind }} km/h</div>
+                                    <div class="lbl">💨 Wind</div>
+                                </div>
+                                <div class="weather-stat">
+                                    <div class="val">{{ weather.rain }} mm</div>
+                                    <div class="lbl">🌧️ Rain</div>
+                                </div>
+                                <div class="weather-stat">
+                                    <div class="val">{{ weather.forecast[0].uv }}</div>
+                                    <div class="lbl">☀️ UV Index</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div style="color:white;">
+                            <h4 style="font-weight:700; margin-bottom:16px;">📅 Next 3 Days Snapshot</h4>
+                            {% for day in weather.forecast[:3] %}
+                            <div
+                                style="background: rgba(255,255,255,0.12); border-radius:14px; padding:16px 20px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between;">
+                                <div>
+                                    <div style="font-weight:700; font-size:1rem;">{{ day.day }}</div>
+                                    <div style="opacity:0.75; font-size:0.85rem;">{{ day.condition }}</div>
+                                </div>
+                                <div style="font-size:1.8rem;"><i class="fas {{ day.icon }}"
+                                        style="color:{{ day.color }};"></i></div>
+                                <div style="text-align:right;">
+                                    <div style="font-size:1.1rem; font-weight:700;">{{ day.high }}° / <span
+                                            style="opacity:0.65;">{{ day.low }}°</span></div>
+                                    <div style="font-size:0.78rem; opacity:0.7;">🌧️ {{ day.rain }}mm · 💨 {{ day.wind
+                                        }}km/h</div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 10-Day Forecast Strip -->
+<div class="container">
+    <div class="forecast-strip">
+        <h5 style="font-weight:800; margin-bottom:20px; color:#0369a1;">📆 10-Day Forecast — {{ selected_district }}, {{
+            selected_state }}</h5>
+        <div class="forecast-cards">
+            {% for day in weather.forecast %}
+            <div class="fc-card">
+                <div class="fc-day">{{ day.day }}</div>
+                <div class="fc-icon"><i class="fas {{ day.icon }}" style="color:{{ day.color }};"></i></div>
+                <div class="fc-temps">{{ day.high }}° <span class="fc-low">/ {{ day.low }}°</span></div>
+                <div class="fc-rain">🌧️ {{ day.rain }}mm</div>
+                <div class="fc-cond">{{ day.condition }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Detail Cards -->
+<div class="container detail-cards">
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="detail-card text-center">
+                <div class="detail-icon mx-auto"><i class="fas fa-thermometer-half"></i></div>
+                <div style="font-size:2rem; font-weight:800; color:#0369a1;">{{ weather.temp }}°C</div>
+                <div style="color:#64748b; font-size:0.85rem;">Current Temperature</div>
+                <div style="margin-top:10px; font-size:0.8rem; color:#94a3b8;">Feels like {{ weather.feels }}°C</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="detail-card text-center">
+                <div class="detail-icon mx-auto" style="background:#fef3c7; color:#d97706;"><i class="fas fa-tint"></i>
+                </div>
+                <div style="font-size:2rem; font-weight:800; color:#d97706;">{{ weather.humidity }}%</div>
+                <div style="color:#64748b; font-size:0.85rem;">Humidity</div>
+                <div style="margin-top:10px; font-size:0.8rem; color:#94a3b8;">
+                    {% if weather.humidity > 70 %}High — Fungal risk elevated{% elif weather.humidity < 30 %}Low —
+                        Irrigation recommended{% else %}Optimal for farming{% endif %} </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="detail-card text-center">
+                    <div class="detail-icon mx-auto" style="background:#f3e8ff; color:#9333ea;"><i
+                            class="fas fa-wind"></i></div>
+                    <div style="font-size:2rem; font-weight:800; color:#9333ea;">{{ weather.wind }}</div>
+                    <div style="color:#64748b; font-size:0.85rem;">Wind Speed (km/h)</div>
+                    <div style="margin-top:10px; font-size:0.8rem; color:#94a3b8;">
+                        {% if weather.wind > 30 %}Strong — Avoid pesticide spray{% elif weather.wind > 15 %}Moderate
+                        winds{% else %}Calm — Good for spraying{% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="detail-card text-center">
+                    <div class="detail-icon mx-auto" style="background:#dcfce7; color:#16a34a;"><i
+                            class="fas fa-cloud-rain"></i></div>
+                    <div style="font-size:2rem; font-weight:800; color:#16a34a;">{{ weather.rain }}mm</div>
+                    <div style="color:#64748b; font-size:0.85rem;">Today's Rainfall</div>
+                    <div style="margin-top:10px; font-size:0.8rem; color:#94a3b8;">
+                        {% if weather.rain > 5 %}Heavy — Delay irrigation{% elif weather.rain > 0 %}Light shower{% else
+                        %}No rain — Monitor crops{% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Farming Tips based on weather -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-8">
+                <div class="card" style="border-radius:18px; border:1px solid #e0f2fe;">
+                    <div class="card-header"
+                        style="background:linear-gradient(135deg,#0369a1,#0ea5e9); color:white; border-radius:18px 18px 0 0; padding:18px 24px;">
+                        <h5 class="mb-0"><i class="fas fa-seedling me-2"></i>Farming Advice for Today</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        {% if weather.temp > 35 %}
+                        <div class="farming-tip-card mb-3"><strong>🌡️ Heat Alert:</strong> Temperature above 35°C —
+                            Irrigate early morning or evening. Mulch soil to retain moisture.</div>
+                        {% elif weather.temp < 10 %} <div class="farming-tip-card mb-3"><strong>❄️ Cold Alert:</strong>
+                            Low temperatures — Protect sensitive crops with polythene covers. Delay sowing.
+                    </div>
+                    {% else %}
+                    <div class="farming-tip-card mb-3"><strong>✅ Good Temperature:</strong> Ideal weather for field
+                        operations and crop growth.</div>
+                    {% endif %}
+
+                    {% if weather.rain > 10 %}
+                    <div class="farming-tip-card mb-3"><strong>🌧️ Heavy Rain:</strong> Avoid fertilizer application.
+                        Ensure proper field drainage. Check for waterlogging.</div>
+                    {% elif weather.rain > 0 %}
+                    <div class="farming-tip-card mb-3"><strong>🌦️ Light Rain:</strong> Good time to sow seeds. Avoid
+                        pesticide spraying — wait 24 hours after rain.</div>
+                    {% else %}
+                    <div class="farming-tip-card mb-3"><strong>☀️ No Rain:</strong> Irrigate fields. Best time to apply
+                        fertilizers and pesticides.</div>
+                    {% endif %}
+
+                    {% if weather.wind > 25 %}
+                    <div class="farming-tip-card"><strong>💨 Strong Winds:</strong> Do NOT spray pesticides or
+                        fertilizers. Secure shade nets and tunnel covers.</div>
+                    {% else %}
+                    <div class="farming-tip-card"><strong>🌱 Wind OK:</strong> Suitable conditions for pesticide and
+                        fungicide application.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card" style="border-radius:18px; border:1px solid #e0f2fe; height:100%;">
+                <div class="card-header text-center"
+                    style="background:#f0f9ff; border-radius:18px 18px 0 0; padding:18px 24px;">
+                    <h5 class="mb-0" style="color:#0369a1;"><i class="fas fa-sun me-2"></i>UV Index</h5>
+                </div>
+                <div class="card-body text-center p-4">
+                    <div
+                        style="font-size:3rem; font-weight:800; color:{% if weather.forecast[0].uv > 8 %}#dc2626{% elif weather.forecast[0].uv > 5 %}#d97706{% else %}#16a34a{% endif %};">
+                        {{ weather.forecast[0].uv }}
+                    </div>
+                    <div style="font-size:0.9rem; color:#64748b; margin-bottom:14px;">
+                        {% if weather.forecast[0].uv > 8 %}Very High — Wear Sun Protection{% elif weather.forecast[0].uv
+                        > 5 %}Moderate — Take Precautions{% else %}Low — Safe to Work Outdoors{% endif %}
+                    </div>
+                    <div class="uv-bar"></div>
+                    <div
+                        style="display:flex; justify-content:space-between; margin-top:6px; font-size:0.72rem; color:#94a3b8;">
+                        <span>Low</span><span>Moderate</span><span>High</span>
+                    </div>
+                    <div class="mt-3 p-3"
+                        style="background:#f8fafc; border-radius:10px; font-size:0.82rem; color:#475569;">
+                        Best farming hours: <strong>6–9 AM</strong> and <strong>4–7 PM</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    const locations = {{ locations | tojson }};
+    function updateDistricts() {
+        const state = document.getElementById('stateSelect').value;
+        const distSel = document.getElementById('districtSelect');
+        distSel.innerHTML = '';
+        const dists = Object.keys(locations[state] || {});
+        dists.forEach(d => {
+            const opt = document.createElement('option');
+            opt.value = d; opt.text = d;
+            distSel.appendChild(opt);
+        });
+    }
+</script>
+{% endblock %}
+{% endblock %}
