@@ -1104,8 +1104,10 @@ def upgrade_premium():
 
 @app.route('/admin')
 def admin_dashboard():
-    # Only allow 'admin' user or if specifically asked (for hackathon/demo we keep it simple)
-    # In real world, we check current_user.username == 'admin'
+    # Security: Only official admin 'aryan' can visit this section
+    if 'user_id' not in session or session.get('username') != 'aryan':
+        flash('Unauthorized Access! This section is restricted to the platform owner only.', 'danger')
+        return redirect(url_for('index'))
     
     try:
         total_users = User.query.count()

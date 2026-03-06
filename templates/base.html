@@ -426,10 +426,12 @@
                                 class="fas fa-chart-line me-1"></i>Prices</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('weather') }}"><i
                                 class="fas fa-cloud-sun me-1"></i>Weather</a></li>
+                    {% if session.get('username') == 'aryan' %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-lock me-1"></i>
-                            Admin</a>
+                        <a class="nav-link text-danger fw-bold" href="{{ url_for('admin_dashboard') }}"><i
+                                class="fas fa-user-shield me-1"></i> Owner Panel</a>
                     </li>
+                    {% endif %}
                     {% if is_authenticated() %}
                     <li class="nav-item">
                         {% if is_premium %}
