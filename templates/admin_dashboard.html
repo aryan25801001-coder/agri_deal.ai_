@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center bg-white p-4 rounded-4 shadow-sm">
+                <div>
+                    <h2 style="font-weight: 850; color: #1e293b; margin: 0;">Admin Command Center</h2>
+                    <p class="text-muted mb-0">Overview of AgriMarket Performance & User Growth</p>
+                </div>
+                <div class="badge bg-success py-2 px-3 rounded-pill">
+                    <i class="fas fa-circle me-1" style="font-size: 0.6rem;"></i> Live System
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="card border-0 rounded-4 shadow-sm h-100 p-3"
+                style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="rounded-circle bg-white bg-opacity-25 p-3">
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                </div>
+                <h6 class="text-white-50 fw-bold">TOTAL USERS</h6>
+                <h2 class="fw-bolder mb-0">{{ stats.total_users }}</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 rounded-4 shadow-sm h-100 p-3"
+                style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="rounded-circle bg-white bg-opacity-25 p-3">
+                        <i class="fas fa-crown fa-2x"></i>
+                    </div>
+                </div>
+                <h6 class="text-white-50 fw-bold">PREMIUM USERS</h6>
+                <h2 class="fw-bolder mb-0">{{ stats.premium_users }}</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 rounded-4 shadow-sm h-100 p-3"
+                style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="rounded-circle bg-white bg-opacity-25 p-3">
+                        <i class="fas fa-box fa-2x"></i>
+                    </div>
+                </div>
+                <h6 class="text-white-50 fw-bold">TOTAL PRODUCTS</h6>
+                <h2 class="fw-bolder mb-0">{{ stats.total_products }}</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 rounded-4 shadow-sm h-100 p-3"
+                style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="rounded-circle bg-white bg-opacity-25 p-3">
+                        <i class="fas fa-indian-rupee-sign fa-2x"></i>
+                    </div>
+                </div>
+                <h6 class="text-white-50 fw-bold">TOTAL REVENUE</h6>
+                <h2 class="fw-bolder mb-0">₹{{ stats.total_revenue }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Recent Transactions -->
+        <div class="col-md-8">
+            <div class="card border-0 rounded-4 shadow-sm">
+                <div class="card-header bg-white py-3 border-0">
+                    <h5 class="fw-bold mb-0">Recent Transactions</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="px-4 py-3 border-0">Order ID</th>
+                                    <th class="py-3 border-0">Product</th>
+                                    <th class="py-3 border-0">Buyer ID</th>
+                                    <th class="py-3 border-0">Amount</th>
+                                    <th class="py-3 border-0">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in recent_orders %}
+                                <tr>
+                                    <td class="px-4 fw-bold">#ORD-{{ order.id }}</td>
+                                    <td>{{ order.product_name }}</td>
+                                    <td>User #{{ order.buyer_id }}</td>
+                                    <td><span class="fw-bold text-success">₹{{ order.total_price }}</span></td>
+                                    <td><span
+                                            class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">Success</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                {% if not recent_orders %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-5 text-muted">No transactions found</td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Users -->
+        <div class="col-md-4">
+            <div class="card border-0 rounded-4 shadow-sm">
+                <div class="card-header bg-white py-3 border-0">
+                    <h5 class="fw-bold mb-0">Newly Registered</h5>
+                </div>
+                <div class="card-body">
+                    {% for user in recent_users %}
+                    <div class="d-flex align-items-center mb-3 pb-3 border-bottom last-child-border-0">
+                        <div class="rounded-circle bg-primary-subtle text-primary p-2 me-3"
+                            style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0 fw-bold">{{ user.username }}</h6>
+                            <small class="text-muted">{{ user.user_type | capitalize }} | {{ user.membership |
+                                capitalize }}</small>
+                        </div>
+                        <div>
+                            <span class="badge bg-light text-dark border rounded-pill">{{
+                                user.created_at.strftime('%H:%M') }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% if not recent_users %}
+                    <p class="text-center text-muted py-4">No users found</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .last-child-border-0:last-child {
+        border-bottom: 0 !important;
+    }
+
+    .bg-success-subtle {
+        background-color: #dcfce7 !important;
+    }
+
+    .text-success {
+        color: #16a34a !important;
+    }
+
+    .bg-primary-subtle {
+        background-color: #dbeafe !important;
+    }
+
+    .text-primary {
+        color: #2563eb !important;
+    }
+</style>
+{% endblock %}

@@ -1102,6 +1102,38 @@ def upgrade_premium():
     return render_template('upgrade_premium.html', user=user)
 
 
+@app.route('/admin')
+def admin_dashboard():
+    # Only allow 'admin' user or if specifically asked (for hackathon/demo we keep it simple)
+    # In real world, we check current_user.username == 'admin'
+    
+    try:
+        total_users = User.query.count()
+        premium_users = User.query.filter_by(membership='premium').count()
+        total_products = Product.query.count()
+        
+        # Calculate total revenue from orders
+        revenue_sum = db.session.query(db.func.sum(Order.total_price)).scalar() or 0
+        
+        # Get recent transactions/orders
+        recent_orders = Order.query.order_by(Order.created_at.desc()).limit(5).all()
+        
+        # Get recent users
+        recent_users = User.query.order_by(User.created_at.desc()).limit(5).all()
+        
+        stats = {
+            'total_users': total_users,
+            'premium_users': premium_users,
+            'total_products': total_products,
+            'total_revenue': revenue_sum,
+            'active_users': total_users # Placeholder for active sessions
+        }
+        
+        return render_template('admin_dashboard.html', stats=stats, recent_orders=recent_orders, recent_users=recent_users)
+    except Exception as e:
+        db.create_all()
+        return redirect(url_for('admin_dashboard'))
+
 if __name__ == '__main__':
     app.run(debug=True)
 

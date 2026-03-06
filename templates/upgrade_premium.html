@@ -286,25 +286,33 @@
                         GPay/PhonePe App Interface.</p>
                 </div>
 
-                <div id="qrUI" style="display: none; width: 100%; max-width: 400px;">
+                <div id="qrUI" style="display: none; width: 100%; max-width: 400px; animation: fadeIn 0.5s ease-out;">
                     <div
-                        style="background: #f8fafc; padding: 30px; border-radius: 20px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+                        style="background: white; padding: 40px 30px; border-radius: 28px; border: 1px solid #edf2f7; box-shadow: 0 10px 30px -5px rgba(0,0,0,0.05); margin-bottom: 25px; position: relative; overflow: hidden;">
+                        <div
+                            style="position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: linear-gradient(90deg, #10b981, #3b82f6);">
+                        </div>
                         <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"
-                            style="width: 180px; height: 180px; margin-bottom: 20px; border: 10px solid white; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);"
+                            style="width: 180px; height: 180px; margin-bottom: 25px; border: 1px solid #f1f5f9; border-radius: 12px; padding: 10px;"
                             alt="QR Code">
-                        <h4 style="font-weight: 800; color: #1e293b;">Scan with any UPI App</h4>
-                        <p class="text-muted" style="font-weight: 600;">Amount: ₹999.00</p>
-                        <div class="alert alert-warning py-2 mb-0" style="font-size: 0.85rem; border-radius: 10px;">
-                            <i class="fas fa-spinner fa-spin me-2"></i> Waiting for payment confirmation...
+                        <h4 style="font-weight: 800; color: #1e293b; margin-bottom: 10px;">Scan & Pay with UPI</h4>
+                        <p class="text-muted"
+                            style="font-weight: 700; font-size: 1.2rem; color: #1e293b !important; margin-bottom: 20px;">
+                            ₹999.00</p>
+                        <div class="alert alert-warning py-2 mb-0"
+                            style="font-size: 0.85rem; border-radius: 12px; border: none; background: #fffbeb; color: #92400e;">
+                            <i class="fas fa-circle-notch fa-spin me-2"></i> Confirming your transaction...
                         </div>
                     </div>
 
-                    <div class="d-flex align-items-center justify-content-center gap-2 mt-4">
+                    <div class="d-flex align-items-center justify-content-center gap-3">
                         <span
-                            style="font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Securely
-                            Powered by</span>
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e3/Razorpay_logo.svg"
-                            style="height: 22px; opacity: 1;" alt="Razorpay">
+                            style="font-size: 0.7rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px;">Secure
+                            Payments by</span>
+                        <!-- Fixed Razorpay Logo with PNG fallback -->
+                        <img src="https://p7.hiclipart.com/preview/414/839/531/razorpay-software-private-limited-payment-gateway-service-india-online-payment-thumbnail.jpg"
+                            onerror="this.src='https://instamojo-cdn2.s3.amazonaws.com/static/images/razorpay-logo.png'"
+                            style="height: 24px; filter: grayscale(100%); opacity: 0.7;" alt="Razorpay Logo">
                     </div>
                 </div>
             </div>
