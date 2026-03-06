@@ -1,0 +1,30 @@
+Retrieving projectΓÇª
+Deploying aryan25801001-coders-projects/agri-deal-ai
+Uploading [--------------------] (0.0B/85.9KB)
+Uploading [=======-------------] (31.6KB/85.9KB)
+Uploading [===========---------] (47.6KB/85.9KB)
+Uploading [==================--] (79.6KB/85.9KB)
+Uploading [====================] (85.9KB/85.9KB)
+Inspect: https://vercel.com/aryan25801001-coders-projects/agri-deal-ai/7cU4LGoWMzPo3mQasKx8xVY3x7MX [4s]
+Production: https://agri-deal-fnmts6pye-aryan25801001-coders-projects.vercel.app [4s]
+Building...
+Building...
+Building: Running build in Washington, D.C., USA (East) ΓÇô iad1
+Building: Build machine configuration: 2 cores, 8 GB
+Building: Retrieving list of deployment files...
+Building: Previous build caches not available.
+Building: Downloading 136 deployment files...
+Building: Running "vercel build"
+Building: Vercel CLI 50.28.0
+Building: WARN! Due to `builds` existing in your configuration file, the Build and Development Settings defined in your Project Settings will not apply. Learn More: https://vercel.link/unused-build-settings
+Building: No Python version specified in .python-version, pyproject.toml, or Pipfile.lock. Using python version: 3.12
+Building: Creating virtual environment at "/vercel/path1/.vercel/python/.venv"...
+Building: Using uv at "/usr/local/bin/uv"
+Building: Installing required dependencies from requirements.txt...
+Building: Build Completed in /vercel/output [4s]
+Building: Deploying outputs...
+[2K[1A[2K[GProduction: https://agri-deal-fnmts6pye-aryan25801001-coders-projects.vercel.app [19s]
+Completing...
+Aliased: https://agri-deal-ai.vercel.app [19s]
+Due to `builds` existing in your configuration file, the Build and Development Settings defined in your Project Settings will not apply. Learn More: https://vercel.link/unused-build-settings
+https://agri-deal-fnmts6pye-aryan25801001-coders-projects.vercel.app
