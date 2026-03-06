@@ -1,0 +1,30 @@
+The "--name" option is deprecated (https://vercel.link/name-flag)
+Loading scopesΓÇª
+Searching for existing projectsΓÇª
+Linked to aryan25801001-coders-projects/agri-deal-ai (created .vercel and added it to .gitignore)
+> Connecting GitHub repository: https://github.com/aryan25801001-coder/agri_deal.ai_
+> Connected
+Deploying aryan25801001-coders-projects/agri-deal-ai
+Uploading [--------------------] (0.0B/1.5MB)
+Uploading [=====---------------] (393.0KB/1.5MB)
+Uploading [==========----------] (778.2KB/1.5MB)
+Uploading [===============-----] (1.1MB/1.5MB)
+Uploading [====================] (1.5MB/1.5MB)
+Inspect: https://vercel.com/aryan25801001-coders-projects/agri-deal-ai/Ec5AVCzjYgVAubTLjKSiaLhq3W45 [5s]
+Production: https://agri-deal-i2xa440ft-aryan25801001-coders-projects.vercel.app [5s]
+Building...
+Building...
+Building: Running build in Washington, D.C., USA (East) ΓÇô iad1
+Building: Build machine configuration: 2 cores, 8 GB
+Building: Retrieving list of deployment files...
+Building: Previous build caches not available.
+Building: Downloading 126 deployment files...
+Building: Running "vercel build"
+Building: Vercel CLI 50.28.0
+Building: WARN! Due to `builds` existing in your configuration file, the Build and Development Settings defined in your Project Settings will not apply. Learn More: https://vercel.link/unused-build-settings
+Building: No Python version specified in .python-version, pyproject.toml, or Pipfile.lock. Using python version: 3.12
+Building: Creating virtual environment at "/vercel/path1/.vercel/python/.venv"...
+Building: Using uv at "/usr/local/bin/uv"
+Building: Installing required dependencies from requirements.txt...
+Building: Build Completed in /vercel/output [5s]
+Building: Deploying outputs...

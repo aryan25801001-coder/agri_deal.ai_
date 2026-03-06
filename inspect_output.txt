@@ -1,0 +1,26 @@
+Fetching deployment "agri-deal-p9wd5gtjs-aryan25801001-coders-projects.vercel.app" in aryan25801001-coders-projects
+> Fetched deployment "agri-deal-p9wd5gtjs-aryan25801001-coders-projects.vercel.app" in aryan25801001-coders-projects [619ms]
+
+  General
+
+    id		dpl_H9EiWH8xvHxpjp5C3vKf3tficsv3
+    name	agri-deal-ai
+    target	production
+    status	ΓùÅ Ready
+    url		https://agri-deal-p9wd5gtjs-aryan25801001-coders-projects.vercel.app
+    created	Fri Mar 06 2026 19:11:11 GMT+0530 (India Standard Time) [24s ago]
+
+
+  Aliases
+
+    Γò╢ https://agri-deal-ai.vercel.app
+    Γò╢ https://agri-deal-ai-aryan25801001-coders-projects.vercel.app
+    Γò╢ https://agri-deal-ai-aryan25801001-coder-aryan25801001-coders-projects.vercel.app
+    
+
+  Builds
+
+    Γöî .        [0ms]
+    ΓööΓöÇΓöÇ ╬╗ app.py (7.69MB) [iad1]
+    
+

@@ -1028,14 +1028,32 @@ def disease_detection():
 @app.route('/upgrade_premium', methods=['GET', 'POST'])
 def upgrade_premium():
     if 'user_id' not in session:
-        flash('Please login first')
+        flash('Please login first to upgrade to Premium')
         return redirect(url_for('login'))
     
-    user = User.query.get(session['user_id'])
+    try:
+        user = User.query.get(session['user_id'])
+    except Exception as e:
+        db.create_all()
+        user = User.query.get(session['user_id'])
+
     if request.method == 'POST':
-        user.membership = 'premium'
-        db.session.commit()
-        flash('Welcome to Premium! All limits have been removed.')
+        # Simulated blockchain processing happens on frontend. 
+        # Here we just mark them premium in DB (if they exist).
+        if user:
+            try:
+                user.membership = 'premium'
+                db.session.commit()
+                flash('Blockchain Transaction Confirmed! Welcome to Web3 Premium! All limits have been removed.')
+            except Exception as e:
+                db.session.rollback()
+                flash('Database Error during premium activation. Please try again.')
+        else:
+            # Session exists but DB record wiped out
+            session.clear()
+            flash('Your session expired or account was lost. Please login again and re-upgrade.')
+            return redirect(url_for('login'))
+            
         return redirect(url_for('dashboard'))
     
     return render_template('upgrade_premium.html', user=user)

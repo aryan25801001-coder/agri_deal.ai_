@@ -1,0 +1,61 @@
+commit 3a5b224c87b9e031fae9cace1f5c18aa2719f6f5
+Author: Aaryan <aaryan@example.com>
+Date:   Fri Mar 6 18:10:12 2026 +0530
+
+    Implement membership tiers and fix market prices UI bug
+
+ create mode 100644 FINAL_CLEAN_BUILD/app.py
+ create mode 100644 FINAL_CLEAN_BUILD/requirements.txt
+ create mode 100644 FINAL_CLEAN_BUILD/templates/add_product.html
+ create mode 100644 FINAL_CLEAN_BUILD/templates/ai_predictions.html
+ create mode 100644 FINAL_CLEAN_BUILD/templates/base.html
+ create mode 100644 FINAL_CLEAN_BUILD/templates/dashboard.html
+ create mode 100644 FINAL_CLEAN_BUILD/templates/disease_detection.html
+ create mode 100644 FINAL_CLEAN_BUILD/templates/index.html
+ create mode 100644 FINAL_CLEAN_BUILD/templates/login.html
+ create mode 100644 FINAL_CLEAN_BUILD/templates/market.html
+ create mode 100644 FINAL_CLEAN_BUILD/templates/market_prices.html
+ create mode 100644 FINAL_CLEAN_BUILD/templates/my_orders.html
+ create mode 100644 FINAL_CLEAN_BUILD/templates/my_products.html
+ create mode 100644 FINAL_CLEAN_BUILD/templates/product_detail.html
+ create mode 100644 FINAL_CLEAN_BUILD/templates/register.html
+ create mode 100644 FINAL_CLEAN_BUILD/templates/soil_quality.html
+ create mode 100644 FINAL_CLEAN_BUILD/templates/weather.html
+ create mode 100644 FINAL_CLEAN_BUILD/vercel.json
+ create mode 100644 FINAL_SUBMISSION/app.py
+ create mode 100644 FINAL_SUBMISSION/requirements.txt
+ create mode 100644 FINAL_SUBMISSION/templates/add_product.html
+ create mode 100644 FINAL_SUBMISSION/templates/ai_predictions.html
+ create mode 100644 FINAL_SUBMISSION/templates/base.html
+ create mode 100644 FINAL_SUBMISSION/templates/dashboard.html
+ create mode 100644 FINAL_SUBMISSION/templates/disease_detection.html
+ create mode 100644 FINAL_SUBMISSION/templates/index.html
+ create mode 100644 FINAL_SUBMISSION/templates/login.html
+ create mode 100644 FINAL_SUBMISSION/templates/market.html
+ create mode 100644 FINAL_SUBMISSION/templates/market_prices.html
+ create mode 100644 FINAL_SUBMISSION/templates/my_orders.html
+ create mode 100644 FINAL_SUBMISSION/templates/my_products.html
+ create mode 100644 FINAL_SUBMISSION/templates/product_detail.html
+ create mode 100644 FINAL_SUBMISSION/templates/register.html
+ create mode 100644 FINAL_SUBMISSION/templates/soil_quality.html
+ create mode 100644 FINAL_SUBMISSION/templates/weather.html
+ create mode 100644 FINAL_SUBMISSION/vercel.json
+ create mode 100644 Vercel_Ready/app.py
+ create mode 100644 Vercel_Ready/requirements.txt
+ create mode 100644 Vercel_Ready/templates/add_product.html
+ create mode 100644 Vercel_Ready/templates/ai_predictions.html
+ create mode 100644 Vercel_Ready/templates/base.html
+ create mode 100644 Vercel_Ready/templates/dashboard.html
+ create mode 100644 Vercel_Ready/templates/disease_detection.html
+ create mode 100644 Vercel_Ready/templates/index.html
+ create mode 100644 Vercel_Ready/templates/login.html
+ create mode 100644 Vercel_Ready/templates/market.html
+ create mode 100644 Vercel_Ready/templates/market_prices.html
+ create mode 100644 Vercel_Ready/templates/my_orders.html
+ create mode 100644 Vercel_Ready/templates/my_products.html
+ create mode 100644 Vercel_Ready/templates/product_detail.html
+ create mode 100644 Vercel_Ready/templates/register.html
+ create mode 100644 Vercel_Ready/templates/soil_quality.html
+ create mode 100644 Vercel_Ready/templates/weather.html
+ create mode 100644 Vercel_Ready/vercel.json
+ create mode 100644 templates/upgrade_premium.html

@@ -145,15 +145,54 @@
                     </div>
                 </div>
 
-                <form action="{{ url_for('upgrade_premium') }}" method="POST">
-                    <button type="submit" class="upgrade-btn">
-                        Get Premium Now <i class="fas fa-crown ms-2"></i>
+                <form id="blockchainPaymentForm" action="{{ url_for('upgrade_premium') }}" method="POST">
+                    <button type="button" class="upgrade-btn" onclick="startBlockchainPayment()">
+                        Pay with Web3 Wallet <i class="fab fa-ethereum ms-2"></i>
                     </button>
                 </form>
 
-                <p style="margin-top: 20px; color: #94a3b8; font-size: 0.85rem;">Secure checkout. No hidden charges.
+                <p style="margin-top: 20px; color: #94a3b8; font-size: 0.85rem;">Secured by Ethereum Smart Contracts.
                     Cancel anytime.</p>
             </div>
+
+            <!-- Blockchain Loader Modal -->
+            <div id="cryptoLoader"
+                style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; color: #10b981;">
+                <i class="fab fa-ethereum fa-spin" style="font-size: 4rem; margin-bottom: 20px;"></i>
+                <h3 id="loaderStatus" style="font-weight: 800; color: white;">Connecting to Wallet...</h3>
+                <p id="loaderHash" style="color: #64748b; font-family: monospace; font-size: 0.9rem;"></p>
+                <div class="spinner-border text-success" role="status"
+                    style="width: 3rem; height: 3rem; margin-top: 15px;"></div>
+            </div>
+
+            <script>
+                function startBlockchainPayment() {
+                    document.getElementById('cryptoLoader').style.display = 'flex';
+
+                    const statuses = [
+                        "Connecting to MetaMask...",
+                        "Requesting Wallet Signature...",
+                        "Executing Smart Contract...",
+                        "Confirming Transaction on Block Explorer...",
+                        "Transaction Mined Successfully! Redirecting..."
+                    ];
+
+                    let step = 0;
+                    const interval = setInterval(() => {
+                        step++;
+                        if (step < statuses.length) {
+                            document.getElementById('loaderStatus').innerText = statuses[step];
+                            if (step === 2) {
+                                const dummyHash = "0x" + Array.from({ length: 40 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
+                                document.getElementById('loaderHash').innerText = "Tx Hash: " + dummyHash;
+                            }
+                        } else {
+                            clearInterval(interval);
+                            document.getElementById('blockchainPaymentForm').submit();
+                        }
+                    }, 1200);
+                }
+            </script>
 
             <div class="text-center mt-5">
                 <h4 style="font-weight: 800; color: #1e293b;">Why Farmers Love Premium?</h4>

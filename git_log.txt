@@ -1,0 +1,17 @@
+commit 3a5b224c87b9e031fae9cace1f5c18aa2719f6f5
+Author: Aaryan <aaryan@example.com>
+Date:   Fri Mar 6 18:10:12 2026 +0530
+
+    Implement membership tiers and fix market prices UI bug
+
+commit 0c1a5090f8d9d64fdbf4e51163e81847308665e3
+Author: Aarya <aryan25801001@gmail.com>
+Date:   Fri Mar 6 15:20:14 2026 +0530
+
+    Deployment fix for Vercel
+
+commit 54b094989d6452764e5f740b58f5df2809849549
+Author: Aarya <aryan25801001@gmail.com>
+Date:   Fri Mar 6 15:14:57 2026 +0530
+
+    First commit

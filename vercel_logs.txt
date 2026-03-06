@@ -1,0 +1,5 @@
+Retrieving projectΓÇª
+Resolving deployment "agri-deal-ai.vercel.app"
+Streaming logs for deployment dpl_HdRpDgNZWcNqNMwdL5SMqadyyadL starting from 19:20:47.16
+
+waiting for new logs...
