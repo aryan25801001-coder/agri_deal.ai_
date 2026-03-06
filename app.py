@@ -87,16 +87,14 @@ class Review(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 # Categories
-CATEGORIES = ['Vegetables', 'Fruits', 'Grains', 'Spices', 'Dairy', 'Livestock', 'Other']
+CATEGORIES = ['Vegetables', 'Fruits', 'Grains', 'Spices', 'Dairy', 'Pulses', 'Livestock', 'Others']
 
-# Initialize Database on first request
-@app.before_request
-def initialize_database():
-    # Attempt to create tables if they don't exist
+# Robust Database Initialization for Vercel
+def ensure_db():
     try:
         db.create_all()
     except Exception as e:
-        app.logger.error(f"Error creating database tables: {e}")
+        app.logger.error(f"DB Init Error: {e}")
 
 # Context processor to make variables available in templates
 @app.context_processor
@@ -110,12 +108,12 @@ def inject_user_status():
                 is_premium = True
         except:
             pass
-    # is_authenticated as a function to match base.html check: if is_authenticated()
     return dict(is_authenticated=lambda: is_authenticated, is_premium=is_premium)
 
 # Routes
 @app.route('/')
 def index():
+    ensure_db() # Run on every page load to be safe
     try:
         products = Product.query.filter_by(status='available').order_by(Product.created_at.desc()).limit(8).all()
         stats = {
@@ -211,6 +209,7 @@ def product_detail(product_id):
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    ensure_db()
     if request.method == 'POST':
         username = request.form['username']
         email = request.form['email']
@@ -247,6 +246,7 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    ensure_db()
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -419,6 +419,7 @@ def add_review(product_id):
 
 @app.route('/ai_predictions')
 def ai_predictions():
+    ensure_db()
     predictions = [
         {'category': 'Vegetables', 'icon': 'fa-carrot', 'current_price': 45, 'predicted_price': 52, 'trend': 'up', 'confidence': 85, 'change': '+15.6%'},
         {'category': 'Fruits', 'icon': 'fa-apple-alt', 'current_price': 60, 'predicted_price': 55, 'trend': 'down', 'confidence': 78, 'change': '-8.3%'},
